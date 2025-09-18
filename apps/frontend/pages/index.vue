@@ -41,24 +41,6 @@ useDashboard().get();
             {{ useFormat.toCurrency(useDashboard().dashboard.invoices.net) }}
           </div>
         </div>
-        <div class="stat">
-          <div class="stat-figure text-warning text-3xl">
-            <FaIcon icon="fa-solid fa-clock" />
-          </div>
-          <div class="stat-title text-warning">TimeTrack</div>
-          <div class="stat-value">
-            {{
-              Math.floor(useDashboard().dashboard.timetracks.minutes / 60)
-                .toString()
-                .padStart(2, "0")
-            }}h:{{
-              Math.floor(useDashboard().dashboard.timetracks.minutes % 60)
-                .toString()
-                .padStart(2, "0")
-            }}m
-          </div>
-          <div class="stat-desc">This year</div>
-        </div>
       </div>
     </div>
     <div

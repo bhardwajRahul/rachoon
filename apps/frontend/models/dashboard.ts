@@ -13,19 +13,14 @@ class Dashboard {
     pending: [] as InvoiceOrOffer[],
   };
 
-  timetracks = {
-    minutes: 0,
-    net: 0,
-  };
-
   constructor(json?: any) {
     if (json) {
       _.merge(this, json);
       this.invoices.pending = this.invoices.pending.map(
-        (i) => new InvoiceOrOffer(i)
+        (i) => new InvoiceOrOffer(i),
       );
       this.offers.pending = this.offers.pending.map(
-        (i) => new InvoiceOrOffer(i)
+        (i) => new InvoiceOrOffer(i),
       );
     }
   }

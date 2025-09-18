@@ -6,7 +6,6 @@ await useProfile().init();
 
 window.addEventListener("keyup", (e) => {
   if (e.key === "Escape") {
-    useTimeTrack().esc();
   }
 });
 </script>

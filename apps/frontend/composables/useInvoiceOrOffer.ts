@@ -1,5 +1,3 @@
-import { type ProjectType } from "~~/models/project";
-import { TimeTrack } from "~~/models/timeTrack";
 import { type ClientType } from "~~/models/client";
 import { InvoiceOrOffer } from "~~/models/invoiceOrOffer";
 
@@ -95,110 +93,6 @@ export default defineStore("invoiceOrOffer", () => {
   function updated() {
     invoiceOrOffer.value.recalc();
     mustSave.value++;
-  }
-
-  function importAsSeparateEntries(
-    timeTracks: TimeTrack[],
-    unit: string,
-    tax: number,
-    range: Date[],
-  ) {
-    timeTracks.map((t) => {
-      invoiceOrOffer.value.addPosition({
-        title: t.data.title,
-        quantity: Math.round((t.data.minutes / 60) * 100) / 100,
-        price:
-          t.project.data.rate ||
-          invoiceOrOffer.value.client.data.conditions.rate,
-        unit: unit,
-        tax: tax,
-      });
-    });
-  }
-
-  function importByProject(
-    timeTracks: TimeTrack[],
-    unit: string,
-    tax: number,
-    range: Date[],
-  ) {
-    const projects: {
-      [id: string]: { timeTracks: TimeTrack[]; project: ProjectType };
-    } = {};
-    timeTracks.map((t) => {
-      if (projects[t.project.data.title]) {
-        projects[t.project.data.title].timeTracks.push(t);
-      } else {
-        projects[t.project.data.title] = {
-          timeTracks: [t],
-          project: t.project,
-        };
-      }
-    });
-    Object.entries(projects).map(([i, p]) => {
-      const minutes = p.timeTracks.reduce((p, c) => (p += c.data.minutes), 0);
-      const text = p.timeTracks.reduce(
-        (p, c) => (p += `<p>${c.data.title}</p>${c.data.description}`),
-        "",
-      );
-      invoiceOrOffer.value.addPosition({
-        title: `${p.project.number}: ${p.project.data.title}`,
-        quantity: Math.round((minutes / 60) * 100) / 100,
-        price:
-          p.project.data.rate ||
-          invoiceOrOffer.value.client.data.conditions.rate,
-        text: text,
-        unit: unit,
-        tax: tax,
-      });
-    });
-  }
-
-  function importAsSingleEntry(
-    timeTracks: TimeTrack[],
-    unit: string,
-    tax: number,
-    range: Date[],
-  ) {
-    const minutes = timeTracks.reduce((p, c) => (p += c.data.minutes), 0);
-    const text = `<ul>${timeTracks.reduce((p, c) => (p += `<li>${c.data.title}<br />${c.data.description}</li>`), "")}</ul>`;
-    invoiceOrOffer.value.addPosition({
-      title: `Work done from ${useFormat.date(range[0])} until ${useFormat.date(range[1])}`,
-      quantity: Math.round((minutes / 60) * 100) / 100,
-      price: invoiceOrOffer.value.client.data.conditions.rate || null,
-      text: text,
-      unit: unit,
-      tax: tax,
-    });
-
-    invoiceOrOffer.value.focusPosition(
-      invoiceOrOffer.value.data.positions.length - 1,
-    );
-  }
-
-  function importFromTimeTrack(
-    timeTracks: TimeTrack[],
-    unit: string,
-    tax: number,
-    type: string,
-    range: Date[],
-  ) {
-    switch (type) {
-      case "separate-entries":
-        importAsSeparateEntries(timeTracks, unit, tax, range);
-        break;
-      case "single-entry":
-        importAsSingleEntry(timeTracks, unit, tax, range);
-        break;
-      default:
-        importByProject(timeTracks, unit, tax, range);
-    }
-    if (
-      invoiceOrOffer.value.data.positions[0].price === null ||
-      invoiceOrOffer.value.data.positions[0].quantity === null
-    ) {
-      invoiceOrOffer.value.removePosition(0);
-    }
   }
 
   async function maybeDoConvertOffer() {
@@ -308,7 +202,6 @@ export default defineStore("invoiceOrOffer", () => {
     mustSave,
     offerToConvert,
     del,
-    importFromTimeTrack,
     save,
     form,
     type,

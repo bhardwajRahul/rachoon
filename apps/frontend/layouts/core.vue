@@ -19,16 +19,6 @@ const active = useRoute().fullPath;
           <ul class="menu menu-horizontal p-0 gap-2">
             <li>
               <NuxtLink
-                href="/timetracks"
-                class="h-8 p-5 rounded-lg"
-                :class="
-                  useRoute().fullPath.includes('/timetrack') ? 'active' : ''
-                "
-                ><FaIcon icon="fa-solid fa-clock" /> TimeTrack
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
                 href="/clients"
                 class="h-8 p-5 rounded-lg"
                 :class="

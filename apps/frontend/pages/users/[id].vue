@@ -1,12 +1,11 @@
 <script setup lang="ts">
-	definePageMeta({
-		layout: 'core',
-	})
+definePageMeta({
+  layout: "core",
+});
 </script>
 
 <template>
-	<div>
-		<UserForm />
-		<UserProjectsList />
-	</div>
+  <div>
+    <UserForm />
+  </div>
 </template>

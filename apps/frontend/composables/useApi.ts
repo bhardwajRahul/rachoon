@@ -6,8 +6,6 @@ import {
 } from "~~/models/invoiceOrOffer";
 import { type OrganizationType } from "~~/models/organization";
 import { User, type UserType } from "~~/models/user";
-import { Project, type ProjectType } from "~~/models/project";
-import { TimeTrack } from "~~/models/timeTrack";
 
 export default function useApi() {
   return {
@@ -27,7 +25,7 @@ export default function useApi() {
             const c = await useApi().clients().count();
             client.number = useSettings().settings.numberFormat(
               "clients",
-              c + 1
+              c + 1,
             );
             return (await useHttp.post(`${endpoint}`, client, {
               title: client.number,
@@ -62,12 +60,12 @@ export default function useApi() {
 
     invoicesOrOffers: (
       type: string,
-      endpoint: string = "/api/invoicesoroffers"
+      endpoint: string = "/api/invoicesoroffers",
     ) => {
       return {
         saveOrUpdate: async (
           invoiceOrOffer: InvoiceOrOfferType,
-          update: boolean = false
+          update: boolean = false,
         ): Promise<InvoiceOrOfferType> => {
           if (update) {
             await useHttp.put(
@@ -76,14 +74,14 @@ export default function useApi() {
               {
                 title: `${type} ${invoiceOrOffer.number}`,
                 text: "Successfully updated",
-              }
+              },
             );
             return invoiceOrOffer;
           } else {
             const c = await useApi().invoicesOrOffers(type).count();
             invoiceOrOffer.number = useSettings().settings.numberFormat(
               type + "s",
-              c + 1
+              c + 1,
             );
             return (await useHttp.post(
               `${endpoint}?type=${type}`,
@@ -92,13 +90,13 @@ export default function useApi() {
                 title: invoiceOrOffer.number,
                 text: `${type} saved successfully`,
                 type: "success",
-              }
+              },
             )) as InvoiceOrOfferType;
           }
         },
         getAll: async (): Promise<InvoiceOrOffer[]> =>
           ((await useHttp.get(`${endpoint}?type=${type}`)) as []).map(
-            (d) => new InvoiceOrOffer(d)
+            (d) => new InvoiceOrOffer(d),
           ),
         get: async (id: string): Promise<InvoiceOrOffer> =>
           new InvoiceOrOffer(await useHttp.get(`${endpoint}/${id}`)),
@@ -112,7 +110,7 @@ export default function useApi() {
             {
               title: "Status changed",
               text: "Successfully marked as " + status,
-            }
+            },
           ),
       };
     },
@@ -143,96 +141,8 @@ export default function useApi() {
               title: "Save password",
               text: "Password saved successfully",
               type: "success",
-            }
+            },
           ),
-      };
-    },
-    projects: (
-      userOrClient?: { client?: ClientType; user?: UserType },
-      cEndpoint = (): string =>
-        `/api/clients/${userOrClient!.client!.id}/projects`,
-      uEndpoint = (): string => `/api/users/${userOrClient!.user!.id}/projects`,
-      endpoint: string = "/api/projects"
-    ) => {
-      return {
-        getAll: async (): Promise<Project[]> =>
-          ((await useHttp.get(endpoint)) as []).map((d) => new Project(d)),
-        count: async (): Promise<number> =>
-          Number(await useHttp.get(`${endpoint}/?count=true`)),
-        delete: async (id: string) => await useHttp.del(`${endpoint}/${id}`),
-        assignToUser: async (id: string) =>
-          await useHttp.put(`${uEndpoint()}/${id}`, {}),
-        unassignFromUser: async (id: string) =>
-          await useHttp.del(`${uEndpoint()}/${id}`),
-        getAllForClient: async (): Promise<Project[]> =>
-          ((await useHttp.get(cEndpoint())) as []).map((d) => new Project(d)),
-        getAllForUser: async (): Promise<Project[]> =>
-          ((await useHttp.get(uEndpoint())) as []).map((d) => new Project(d)),
-        saveOrUpdate: async (
-          project: ProjectType,
-          update: boolean = false
-        ): Promise<Project> => {
-          if (update) {
-            return new Project(
-              (await useHttp.post(
-                `${endpoint}/${project.id}`,
-                project
-              )) as ProjectType
-            );
-          } else {
-            return new Project(
-              (await useHttp.post(cEndpoint(), project)) as ProjectType
-            );
-          }
-        },
-      };
-    },
-    timeTracks: (
-      project?: ProjectType,
-      pEndpoint = (id: string, cId: string): string =>
-        `/api/clients/${cId}/projects/${id}/timetracks`,
-      endpoint: string = "/api/timetracks"
-    ) => {
-      return {
-        getAll: async (filter?: {
-          clientId?: string;
-          startDate?: Date;
-          endDate?: Date;
-        }): Promise<TimeTrack[]> =>
-          (
-            (await useHttp.get(
-              `/api/timetracks?clientId=${filter?.clientId || ""}&startDate=${filter?.startDate?.toISOString() || ""}&endDate=${filter?.endDate?.toISOString() || ""}`
-            )) as []
-          ).map((d) => new TimeTrack(d)),
-        delete: async (id: string) =>
-          await useHttp.del(`/api/timetracks/${id}`, {
-            title: "TimeTrack deleted",
-            text: "The time entry has been deleted",
-          }),
-        saveOrUpdate: async (
-          timeTrack: TimeTrack,
-          update: boolean = false
-        ): Promise<TimeTrack> => {
-          if (update) {
-            return new TimeTrack(
-              await useHttp.put(`${endpoint}/${timeTrack.id}`, timeTrack, {
-                title: "TimeTrack updated",
-                text: "The time entry has been updated",
-              })
-            );
-          } else {
-            return new TimeTrack(
-              await useHttp.post(
-                pEndpoint(project!.id, project!.client.id),
-                timeTrack,
-                {
-                  title: "TimeTrack logged",
-                  text: "The time entry has been saved",
-                }
-              )
-            );
-          }
-        },
       };
     },
     dashboard: () => {
@@ -242,13 +152,13 @@ export default function useApi() {
     },
     render: async (
       html: string,
-      preview: boolean = false
+      preview: boolean = false,
     ): Promise<string[] | string> => {
       const res = (await useHttp.post(
         `/api/render${preview ? "?preview=true" : ""}`,
         {
           html: html,
-        }
+        },
       )) as string[];
 
       if (preview) return res;

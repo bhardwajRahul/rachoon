@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { Project } from "./project";
 interface ClientData {
   info: {
     vat: string;
@@ -39,9 +38,7 @@ export type ClientType = {
   totalInvoices: number;
   pendingInvoices: number;
   totalOffers: number;
-  totalProjects: number;
   pendingOffers: number;
-  projects: Project[];
 };
 
 class Client implements ClientType {
@@ -62,11 +59,9 @@ class Client implements ClientType {
     },
   };
   minutes: number = 0;
-  projects: Project[] = [];
   totalInvoices: number = 0;
   pendingInvoices: number = 0;
   totalOffers: number = 0;
-  totalProjects: number = 0;
   pendingOffers: number = 0;
   duration: string = "00h:00m";
 
