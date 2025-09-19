@@ -7,23 +7,22 @@ useClient().form();
     class="progress w-full progress-primary"
     v-if="useClient().loading"
   ></progress>
-  <form @submit="useClient().save" v-else>
-    <div class="prose mb-5">
-      <h1><FaIcon icon="fa-solid fa-users" /> {{ useClient().title }}</h1>
-    </div>
-    <div class="flex gap-2">
-      <button class="btn btn-sm btn-primary gap-2" type="submit">
-        <FaIcon icon="fa-solid fa-plus-circle " /> Save
-      </button>
-      <button
-        v-if="useClient().client.id !== ''"
-        class="btn btn-sm btn-error gap-2 btn-outline"
-      >
-        <FaIcon icon="fa-solid fa-close" /> Delete
-      </button>
-    </div>
 
-    <div class="divider"></div>
+  <form @submit="useClient().save">
+    <FormHeader :title="useClient().client.number" icon="fa-user">
+      <template #buttons>
+        <button class="btn btn-sm gap-2" type="submit">
+          <FaIcon icon="fa-solid fa-save " />
+          {{ useClient().client.id === "" ? "Create Client" : "Save" }}
+        </button>
+        <button
+          v-if="useClient().client.id !== ''"
+          class="btn btn-sm btn-error gap-2 btn-outline"
+        >
+          <FaIcon icon="fa-solid fa-close" /> Delete
+        </button>
+      </template>
+    </FormHeader>
 
     <ul
       v-if="useClient().hasErrors"
@@ -34,11 +33,26 @@ useClient().form();
       </li>
     </ul>
 
-    <div class="grid grid-cols-2 gap-5">
+    <FormSection title="Client Information" description="Manage your clients">
       <ClientFormBasic />
-      <ClientFormContact />
+    </FormSection>
+    <FormSection
+      title="Address"
+      description="Enter the full registered address."
+    >
       <ClientFormAddress />
+    </FormSection>
+    <FormSection
+      title="Primary Contact"
+      description="Provide main contact person and email address."
+    >
+      <ClientFormContact />
+    </FormSection>
+    <FormSection
+      title="Conditions"
+      description="Specify agreed payment terms and conditions."
+    >
       <ClientFormConditions />
-    </div>
+    </FormSection>
   </form>
 </template>

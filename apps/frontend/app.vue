@@ -23,3 +23,9 @@ window.addEventListener("keyup", (e) => {
     </NuxtLayout>
   </div>
 </template>
+
+<style scoped lang="scss">
+#app {
+  @apply bg-base-200;
+}
+</style>

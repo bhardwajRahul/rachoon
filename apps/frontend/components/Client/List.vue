@@ -3,36 +3,32 @@ useClient().list();
 </script>
 
 <template>
-  <progress
-    class="progress w-full progress-primary"
-    v-if="useClient().loading"
-  ></progress>
+  <Loading v-if="useClient().loading" />
   <div v-else>
+    <FormHeader title="Clients" icon="fa-user" :divider="false">
+      <template #buttons>
+        <NuxtLink class="btn btn-sm btn-neutral gap-2 no-underline" href="/clients/new">
+          <FaIcon icon="fa-solid fa-plus-circle " />
+          New client
+        </NuxtLink>
+      </template>
+    </FormHeader>
     <div class="text-center mt-20" v-if="useClient().clients.length === 0">
       <div class="prose">
-        <FaIcon icon="fa-users" class="text-5xl text-accent" />
-        <h1 class="!text-accent mt-5">No clients</h1>
+        <FaIcon icon="fa-users" class="text-5xl" />
+        <h1 class="mt-5">No clients</h1>
         <p>
           It appears you have
-          <strong class="text-accent">no clients</strong> created. Go ahead and
-          create one.
+          <strong>no clients</strong>
+          created. Go ahead and
+          <NuxtLink href="/clients/new">create one</NuxtLink>
+          .
         </p>
       </div>
-      <NuxtLink class="btn btn-sm btn-primary mt-10 gap-2" href="/clients/new">
-        <FaIcon icon="fa-solid fa-plus-circle gap-2 " /> New client
-      </NuxtLink>
     </div>
-
     <div v-else>
-      <NuxtLink class="btn btn-sm btn-primary gap-2" href="/clients/new">
-        <FaIcon icon="fa-solid fa-plus-circle " /> New client
-      </NuxtLink>
-
-      <div class="divider"></div>
-
       <div class="overflow-x-auto">
-        <table class="table table-zebra table-compact w-full table-primary">
-          <!-- head -->
+        <table class="table table-compact w-full">
           <thead>
             <tr>
               <th width="200">#</th>
@@ -45,31 +41,27 @@ useClient().list();
             <tr class="hover" v-for="c in useClient().clients" :key="c.id">
               <td>
                 <NuxtLink :href="`/clients/${c.id}`" class="link">
-                  {{ c.number }}</NuxtLink
-                ><br /><small class="opacity-50"
-                  >last modified {{ useFormat.date(c.updatedAt) }}</small
-                >
+                  {{ c.number }}
+                </NuxtLink>
+                <br />
+                <small class="opacity-50">last modified {{ useFormat.date(c.updatedAt) }}</small>
               </td>
               <td>
-                {{ c.name }}<br /><small class="opacity-50">{{
-                  c.data.info.vat
-                }}</small>
+                {{ c.name }}
+                <br />
+                <small class="opacity-50">{{ c.data.info.vat }}</small>
               </td>
               <td>
-                {{ c.totalOffers }}<br />
-                <span
-                  v-if="c.pendingOffers > 0"
-                  class="text-error text-opacity-50"
-                  >{{ c.pendingOffers }}</span
-                >&nbsp;
+                {{ c.totalOffers }}
+                <br />
+                <span v-if="c.pendingOffers > 0" class="text-error text-opacity-50">{{ c.pendingOffers }}</span>
+                &nbsp;
               </td>
               <td>
-                {{ c.totalInvoices }}<br />
-                <small
-                  v-if="c.pendingInvoices > 0"
-                  class="text-error text-opacity-50"
-                  >pending {{ c.pendingInvoices }}</small
-                >&nbsp;
+                {{ c.totalInvoices }}
+                <br />
+                <small v-if="c.pendingInvoices > 0" class="text-error text-opacity-50">pending {{ c.pendingInvoices }}</small>
+                &nbsp;
               </td>
             </tr>
           </tbody>

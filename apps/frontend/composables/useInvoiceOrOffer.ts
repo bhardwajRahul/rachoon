@@ -4,7 +4,11 @@ import { InvoiceOrOffer } from "~~/models/invoiceOrOffer";
 import * as dateFns from "date-fns";
 
 export default defineStore("invoiceOrOffer", () => {
-  const type = () => useRoute().path.split("/")[1];
+  const type = (firstToUpper = false) => {
+    let res = useRoute().path.split("/")[1];
+    if (firstToUpper) res = res.charAt(0).toUpperCase() + res.slice(1);
+    return res;
+  };
   const singularType = () => type().slice(0, type().length - 1);
   const invoicesOrOffers = ref([]);
   const invoiceOrOffer = ref(new InvoiceOrOffer());

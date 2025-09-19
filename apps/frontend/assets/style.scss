@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Leckerli+One&family=Cantarell:wght@200;400;700&display=swap');
-@import '@vuepic/vue-datepicker/dist/main.css';
+@import url("https://fonts.googleapis.com/css2?family=Leckerli+One&family=Cantarell:wght@200;400;700&display=swap");
+@import "@vuepic/vue-datepicker/dist/main.css";
 
 * {
   scrollbar-width: thin;
@@ -15,7 +15,6 @@
   width: 7px;
 }
 
-
 *::-webkit-scrollbar-track {
   @apply bg-base-300;
   border-radius: 5px;
@@ -26,44 +25,45 @@
   border-radius: 14px;
 }
 
-html,body {
-  font-family: 'Cantarell';
+html,
+body {
+  font-family: "Cantarell";
 }
 
 *:focus {
-    outline: 0px !important;
+  outline: 0px !important;
 }
 
-input:focus, select:focus {
-    @apply border-info #{!important};
+input:focus,
+select:focus {
+  @apply border-info #{!important};
 }
 
 .divider {
-    @apply opacity-50;
+  @apply opacity-50;
 }
 .tab-active {
-    @apply text-primary;
+  @apply text-primary;
 }
 
 #app {
-    min-height: 100vh;
+  min-height: 100vh;
 }
-
 
 .ql-toolbar,
 .ql-container {
- @apply border-base-100 #{!important};
+  @apply border-base-100 #{!important};
 }
 
-
-.dp__preset_ranges{
+.dp__preset_ranges {
   @apply text-sm text-white #{!important};
 }
 .dp__arrow_top {
-    @apply bg-info #{!important} ;
+  @apply bg-info #{!important};
 }
 
-.dp__calendar_header_item, .dp__month_year_row {
+.dp__calendar_header_item,
+.dp__month_year_row {
   @apply text-sm text-base-content;
 }
 
@@ -83,150 +83,146 @@ input:focus, select:focus {
   }
 }
 
-.dp__range_between, .dp__range_start, .dp__cell_inner:hover{
+.dp__range_between,
+.dp__range_start,
+.dp__cell_inner:hover {
   @apply bg-info bg-opacity-20 border-none #{!important};
 }
 
-.dp__cell_inner:hover,.dp__range_start {
+.dp__cell_inner:hover,
+.dp__range_start {
   @apply bg-opacity-30 #{!important};
 }
 
-
 .input-group :first-child {
-    @apply rounded-tl-lg rounded-bl-lg #{!important};
-  }
-  
-  .input-group :last-child {
-    @apply rounded-tr-lg rounded-br-lg #{!important};
-  }
+  @apply rounded-tl-lg rounded-bl-lg #{!important};
+}
 
-  .ProseMirror p.is-editor-empty:first-child::before {
-    content: attr(data-placeholder);
-    float: left;
-    pointer-events: none;
-    height: 0;
-    opacity: 0.3;
-  }
+.input-group :last-child {
+  @apply rounded-tr-lg rounded-br-lg #{!important};
+}
 
-  table tbody td {
-    transition: background-color 0.3s;
-  }
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  pointer-events: none;
+  height: 0;
+  opacity: 0.3;
+}
 
-  .table.table-primary thead tr th {
-    @apply text-primary bg-primary bg-opacity-10;
-  }
+.table tbody tr td {
+  @apply rounded-none;
+}
 
-  .table.table-info thead tr th {
-    @apply text-info bg-info bg-opacity-10;
-  }
+.table thead tr th {
+  @apply bg-base-100 rounded-none;
+}
 
-  .table.table-info-body tbody tr td {
-    @apply bg-info bg-opacity-5;
-  }
+.table td {
+  background: none;
+  @apply border-b border-base-300;
+}
 
-  .logo h2 {
-    font-weight: 800;
-    font-size: 35px;
-    font-family: "Leckerli One";
-    @apply text-white;
-  }
+.logo h2 {
+  font-weight: 800;
+  font-size: 35px;
+  font-family: "Leckerli One";
+  @apply text-white;
+}
 
-  .vue-notification-wrapper {
-    @apply pr-5 #{!important};
-  }
+.vue-notification-wrapper {
+  @apply pr-5 #{!important};
+}
 
-  .notification.alert {
-    @apply bg-primary text-black;
-    &.success {
-      @apply bg-success text-black;
+.notification.alert {
+  @apply bg-primary text-black;
+  &.success {
+    @apply bg-success text-black;
+  }
+  &.info {
+    @apply bg-info text-black;
+  }
+  &.error {
+    @apply bg-error text-black;
+  }
+}
+
+.label-text {
+  @apply opacity-50;
+}
+
+input[type="text"]:focus {
+  @apply text-info;
+  @apply opacity-100;
+}
+
+.prose {
+  @apply max-w-full;
+  h1 {
+    font-weight: 700;
+  }
+  h2,
+  h3 {
+    font-weight: 700;
+  }
+}
+
+.tooltip {
+  cursor: pointer;
+}
+.tooltip:before {
+  @apply text-xs;
+}
+
+.simple-typeahead-list {
+  position: absolute;
+  @apply rounded-lg mt-2 w-80;
+  cursor: pointer;
+  z-index: 9999;
+
+  .simple-typeahead-list-item {
+    @apply bg-base-300 p-1;
+    .simple-typeahead-list-item-text {
+      strong {
+        @apply text-info;
+      }
     }
-    &.info {
+    &.simple-typeahead-list-item-active {
       @apply bg-info text-black;
-    }
-    &.error {
-      @apply bg-error text-black;
-    }
-  }
-
-  .label-text {
-    @apply text-info opacity-50;
-  }
-
-  input[type=text]:focus {
-    @apply text-info;
-    @apply opacity-100;
-  }
-
-  .prose {
-    @apply max-w-full;
-    h1 {
-      @apply text-success;
-      font-weight: 700;
-    }
-    h2, h3 {
-      @apply text-primary;
-      font-weight: 700;
-    }
-  }
-
-  .tooltip {
-    cursor: pointer;
-  }
-  .tooltip:before {
-    @apply text-xs;
-  }
-
-  .simple-typeahead-list {
-    position: absolute;
-    @apply  rounded-lg mt-2 w-80;
-    cursor: pointer;
-    z-index: 9999;
-    
-    .simple-typeahead-list-item {
-      @apply bg-base-300 p-1;
       .simple-typeahead-list-item-text {
         strong {
-          @apply text-info
-        }
-      }
-      &.simple-typeahead-list-item-active {
-        @apply bg-info text-black;
-        .simple-typeahead-list-item-text {
-          strong {
-            @apply text-black
-          }
+          @apply text-black;
         }
       }
     }
-
-    small {
-      @apply text-xs;
-    }
-    
   }
 
-  input::placeholder {
-    @apply text-base-content text-opacity-50;
+  small {
+    @apply text-xs;
   }
+}
 
-  .dp__input {
-    font-family: 'Cantarell' !important;
-    @apply text-base-content;
-  }
+input::placeholder {
+  @apply text-base-content text-opacity-50;
+}
 
-  .dp__input_wrap svg {
-    @apply fill-info;
-    
-  }
+.dp__input {
+  font-family: "Cantarell" !important;
+  @apply text-base-content;
+}
 
+.dp__input_wrap svg {
+  @apply fill-info;
+}
 
-  .page-enter-active,
-.page-leave-active  {
+.page-enter-active,
+.page-leave-active {
   transition: opacity 0.3s;
 }
 .page-enter,
-.page-leave-to{
+.page-leave-to {
   opacity: 0;
+  filter: blur(1rem);
 }
 
 :root {
@@ -248,7 +244,6 @@ input:focus, select:focus {
   padding: 0;
   margin: 0;
 }
-
 
 .dp__theme_dark {
   --dp-background-color: hsl(var(--b3));

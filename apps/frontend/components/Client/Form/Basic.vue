@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="prose mb-5">
-      <h2>Client</h2>
-    </div>
     <div class="grid grid-cols-2 gap-5">
       <div>
         <label class="label w-full max-w-xs">

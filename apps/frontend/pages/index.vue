@@ -9,10 +9,8 @@ useDashboard().get();
 
 <template>
   <div>
-    <progress
-      class="progress w-full progress-primary"
-      v-if="useDashboard().loading"
-    ></progress>
+    <Loading v-if="useDashboard().loading" />
+
     <div v-else>
       <div class="stats shadow">
         <div class="stat">

@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   css: ["~/assets/style.scss", "@fortawesome/fontawesome-svg-core/styles.css"],
   devtools: { enabled: true },
   ssr: false,
+  app: {
+    pageTransition: { name: "page", mode: "out-in" },
+  },
   runtimeConfig: {
     public: {
       apiURL: process.env.API_URL || "https://api.rachoon.work",
