@@ -22,11 +22,15 @@ export default function useApi() {
           if (update) {
             return await useHttp.put(`${endpoint}/${client.id}`, client, notif);
           } else {
-            const c = await useApi().clients().count();
-            client.number = useSettings().settings.numberFormat("clients", c + 1);
             return (await useHttp.post(`${endpoint}`, client, notif)) as ClientType;
           }
         },
+      };
+    },
+
+    number: (type: string, endpoint: string = "/api/number") => {
+      return {
+        get: async (): Promise<string> => await useHttp.get(`${endpoint}/${type}`),
       };
     },
 
@@ -82,8 +86,6 @@ export default function useApi() {
             });
             return invoiceOrOffer;
           } else {
-            const c = await useApi().invoicesOrOffers(type).count();
-            invoiceOrOffer.number = useSettings().settings.numberFormat(type + "s", c + 1);
             return (await useHttp.post(`${endpoint}?type=${type}`, invoiceOrOffer, {
               title: invoiceOrOffer.number,
               text: `${type} saved successfully`,
@@ -95,7 +97,6 @@ export default function useApi() {
           ((await useHttp.get(`${endpoint}?type=${type}`)) as []).map((d) => new InvoiceOrOffer(d)),
         get: async (id: string): Promise<InvoiceOrOffer> => new InvoiceOrOffer(await useHttp.get(`${endpoint}/${id}`)),
         duplicate: async (id: string): Promise<InvoiceOrOffer> => await useHttp.get(`${endpoint}/duplicate/${id}`),
-        getNextNumber: async (): Promise<string> => await useHttp.get(`${endpoint}/number?type=${type}`),
         delete: async (id: string) => await useHttp.del(`${endpoint}/${id}`),
         count: async (): Promise<number> => Number(await useHttp.get(`${endpoint}/?count=true&type=${type}`)),
         setStatus: async (id: string, status: string) =>

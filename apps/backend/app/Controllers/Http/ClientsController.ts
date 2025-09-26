@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import ClientValidator from 'App/Validators/Client'
 import Client from '../../Models/Client'
+import Numberervice from 'App/Services/Number'
 
 export default class ClientsController {
   public async index(ctx: HttpContextContract) {
@@ -20,6 +21,7 @@ export default class ClientsController {
 
   public async store(ctx: HttpContextContract) {
     const body = await ctx.request.validate(ClientValidator)
+    body.number = await Numberervice.client(ctx.auth.user!)
     return await Client.create({
       ...body,
       organizationId: ctx.auth.user?.organizationId,

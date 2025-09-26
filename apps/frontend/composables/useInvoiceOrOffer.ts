@@ -152,7 +152,7 @@ export default defineStore("invoiceOrOffer", () => {
 
     invoiceOrOffer.value = new InvoiceOrOffer();
     if (id === "new") {
-      invoiceOrOffer.value.number = await useApi().invoicesOrOffers(singularType()).getNextNumber();
+      invoiceOrOffer.value.number = await useApi().number(singularType()).get();
       title.value = invoiceOrOffer.value.number;
 
       invoiceOrOffer.value.data.dueDate = dateFns.add(invoiceOrOffer.value.data.date, {

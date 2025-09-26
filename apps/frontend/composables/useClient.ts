@@ -39,9 +39,8 @@ export default defineStore("client", () => {
 
     loading.value = true;
     if (id === "new") {
-      const count = (await useApi().clients().count()) + 1;
       client.value = new Client();
-      client.value.number = useSettings().settings.numberFormat("clients", count);
+      client.value.number = await useApi().number("client").get();
       title.value = client.value.number;
     } else {
       client.value = _.mergeWith(client.value, await useApi().clients().get(id));

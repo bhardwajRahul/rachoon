@@ -28,10 +28,7 @@ export default class Format {
     return val;
   }
 
-  static invoiceOrOfferNumber(
-    entity: { format: string; padZeros: number },
-    add: number = 0,
-  ) {
+  static number(entity: { format: string; padZeros: number }, add: number = 0) {
     let number = String(1 + add).padStart(entity.padZeros, "0");
 
     number = entity.format.replace("{number}", number);
