@@ -33,7 +33,6 @@ interface SettingsData {
   offers: {
     number: {
       format: String;
-      start: number;
       padZeros: number;
     };
     dueDays: number;
@@ -41,7 +40,6 @@ interface SettingsData {
   clients: {
     number: {
       format: String;
-      start: number;
       padZeros: number;
     };
   };
@@ -75,7 +73,6 @@ class Settings implements SettingsData {
     title: "Invoice",
     number: {
       format: "INV-{number}{date:yyMMdd}",
-      start: 0,
       padZeros: 3,
     },
     dueDays: 30,
@@ -84,7 +81,6 @@ class Settings implements SettingsData {
     title: "Offer",
     number: {
       format: "OFF-{number}{date:yyMMdd}",
-      start: 0,
       padZeros: 3,
     },
     dueDays: 30,

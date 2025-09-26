@@ -29,13 +29,10 @@ export default class Format {
   }
 
   static invoiceOrOfferNumber(
-    entity: { start: number; format: string; padZeros: number },
+    entity: { format: string; padZeros: number },
     add: number = 0,
   ) {
-    let number = String(Number(entity.start) + add).padStart(
-      entity.padZeros,
-      "0",
-    );
+    let number = String(1 + add).padStart(entity.padZeros, "0");
 
     number = entity.format.replace("{number}", number);
     const d = number.match(/\{date:[a-zA-Z_\-\.]+\}/);

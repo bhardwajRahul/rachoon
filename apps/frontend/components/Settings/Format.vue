@@ -9,35 +9,6 @@ const entity = useSettings().settings[props.entity];
   <div class="grid grid-cols-2 gap-5">
     <div>
       <label class="label w-full max-w-xs">
-        <span class="label-text">
-          Start with number
-          <span class="text-red-700">*</span>
-        </span>
-      </label>
-      <input
-        type="text"
-        v-model="entity.number.start"
-        v-maska="'#*'"
-        placeholder="Organization name"
-        required
-        class="input input-bordered input-sm w-full max-w-xs"
-      />
-    </div>
-    <div>
-      <label class="label w-full max-w-xs">
-        <span class="label-text">Pad with zeros</span>
-      </label>
-      <input
-        type="text"
-        v-maska="'#*'"
-        v-model="entity.number.padZeros"
-        placeholder=""
-        required
-        class="input input-bordered input-sm w-full max-w-xs"
-      />
-    </div>
-    <div>
-      <label class="label w-full max-w-xs">
         <span class="label-text">Format</span>
       </label>
       <input
@@ -56,6 +27,20 @@ const entity = useSettings().settings[props.entity];
 
         <a href="https://date-fns.org/v2.29.3/docs/format" target="_blank">See format options here</a>
       </div>
+    </div>
+
+    <div>
+      <label class="label w-full max-w-xs">
+        <span class="label-text">Pad with zeros</span>
+      </label>
+      <input
+        type="text"
+        v-maska="'#*'"
+        v-model="entity.number.padZeros"
+        placeholder=""
+        required
+        class="input input-bordered input-sm w-full max-w-xs"
+      />
     </div>
 
     <div class="prose">
