@@ -45,7 +45,6 @@ export default class BaseAppModel extends compose(BaseModel, SoftDeletes) {
       //TODO: throw validation errors
       const filter = ctx.request.qs()['filter']
       if (typeof filter !== 'object') return
-      console.log(filter)
       for (const field in filter) {
         const f = filter[field]
         if (typeof f !== 'object') continue

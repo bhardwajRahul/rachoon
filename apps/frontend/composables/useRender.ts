@@ -1,6 +1,5 @@
 export default async function useRender(object: any, preview: boolean = false): Promise<string | string[]> {
   let tpl = "";
-  console.log(object.templateId);
 
   if (object.templateId) {
     tpl = object.templateId;
