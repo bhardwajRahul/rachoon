@@ -38,7 +38,13 @@ export default class HttpClient {
       });
 
       if (notify) {
-        toast(notify.title, { theme: "auto", type: notify.type, position: "bottom-right" });
+        toast(`<div class="text-sm"><div><strong>${notify.title}</strong></div><div>${notify.text}</div></div>`, {
+          theme: "auto",
+          class: "",
+          type: notify.type,
+          position: "bottom-right",
+          dangerouslyHTMLString: true,
+        });
         // useNotification().notify({
         //   title: notify.title,
         //   text: notify.text,

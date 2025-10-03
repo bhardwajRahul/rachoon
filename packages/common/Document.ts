@@ -200,6 +200,7 @@ class Document implements DocumentType {
   disabled = () => this.convertedFromOffer() || this.type === "reminder";
 
   calcPositions = () => {
+    console.log("calcPositions");
     let sumPositions = this.data.positions.reduce(
       (p, c) => (p += c.quantity * c.price),
       0,
