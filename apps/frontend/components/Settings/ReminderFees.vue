@@ -3,12 +3,13 @@ const fees = useSettings().settings.reminders.fees;
 </script>
 <template>
   <FormSection title="Reminder fees" description="Set the default fees for your reminders.">
-    <table class="table table-compact table-zebra w-full m-0">
+    <table class="table table-compact w-full m-0">
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Value</th>
+          <th class="text-left">Title</th>
+          <th width="150" class="text-left">Value</th>
           <th></th>
+          <th width="50"></th>
         </tr>
       </thead>
       <tbody>
@@ -40,16 +41,17 @@ const fees = useSettings().settings.reminders.fees;
               </select>
             </div>
           </td>
+          <td></td>
           <td class="text-right">
-            <button class="btn btn-square btn-sm mr-2" @click="useSettings().settings.removeFee(i)">
-              <FaIcon icon="fa-trash-can" />
+            <button class="btn btn-ghost btn-circle btn-xs mr-2" @click="useSettings().settings.removeFee(i)">
+              <FaIcon icon="fa-xmark" />
             </button>
           </td>
         </tr>
       </tbody>
     </table>
     <div class="flex justify-center mt-5">
-      <button class="btn btn-xs btn-info btn-outline gap-1" @click="useSettings().settings.addFee()">
+      <button class="btn btn-xs btn-outline gap-1" @click="useSettings().settings.addFee()">
         <FaIcon icon="fa-add mr-5" />
         Add fee
       </button>

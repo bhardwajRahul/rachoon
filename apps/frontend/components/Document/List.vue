@@ -18,17 +18,15 @@ if (props.clientId && props.clientId !== "") {
 } else {
   controller().list();
 }
+
+const icons = { offers: "fa-file-contract", invoices: "fa-file-invoice", reminders: "fa-file-lines" };
 </script>
 
 <template>
   <Loading v-if="controller().loading" />
 
   <div v-else>
-    <FormHeader
-      :title="controller().type(true)"
-      :icon="controller().type() === 'offers' ? 'fa-file-invoice' : 'fa-file-invoice-dollar'"
-      :divider="false"
-    >
+    <FormHeader :title="controller().type(true)" :icon="icons[controller().type()]" :divider="false">
       <template #buttons>
         <NuxtLink
           class="btn btn-sm btn-neutral gap-2 no-underline"

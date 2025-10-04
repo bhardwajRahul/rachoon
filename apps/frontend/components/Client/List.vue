@@ -9,7 +9,7 @@ onMounted(() => {
 <template>
   <Loading v-if="controller().loading" />
   <div v-else>
-    <FormHeader title="Clients" icon="fa-user" :divider="false">
+    <FormHeader title="Clients" icon="fa-user-tie" :divider="false">
       <template #buttons>
         <NuxtLink class="btn btn-sm btn-neutral gap-2 no-underline" href="/clients/new">
           <FaIcon icon="fa-solid fa-plus-circle " />

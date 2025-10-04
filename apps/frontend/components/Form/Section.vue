@@ -5,7 +5,7 @@
       <p>{{ $props.description }}</p>
       <slot name="extra" />
     </div>
-    <div class="w-3/5 bg-base-300 rounded-md p-5 shadow-md">
+    <div class="w-3/5 bg-base-100 rounded-md p-5 shadow-md">
       <slot />
     </div>
   </div>
