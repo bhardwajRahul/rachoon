@@ -1,11 +1,11 @@
 <template>
-  <div class="px-10 py-5 prose flex">
-    <div class="w-2/5 p-5">
+  <div class="px-10 py-5 prose md:flex">
+    <div class="w-full md:w-2/5 p-5">
       <h3>{{ $props.title }}</h3>
       <p>{{ $props.description }}</p>
       <slot name="extra" />
     </div>
-    <div class="w-3/5 bg-base-100 rounded-md p-5 shadow-md">
+    <div class="w-full md:w-3/5 bg-base-100 rounded-md p-5 shadow-md">
       <slot />
     </div>
   </div>
