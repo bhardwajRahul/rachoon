@@ -14,10 +14,23 @@ export default class DashboardController {
       .preload('offer')
       .preload('invoices')
       .orderBy('created_at', 'desc')
+      .limit(5)
 
     const pendingOffers = await Document.query()
       .where({
         type: 'offer',
+        status: 'pending',
+        organizationId: ctx.auth.user?.organization.id,
+      })
+      .preload('client')
+      .preload('offer')
+      .preload('invoices')
+      .orderBy('created_at', 'desc')
+      .limit(5)
+
+    const pendingReminders = await Document.query()
+      .where({
+        type: 'reminder',
         status: 'pending',
         organizationId: ctx.auth.user?.organization.id,
       })
@@ -38,12 +51,30 @@ export default class DashboardController {
       .select(Database.raw(`sum((data->>'net')::float) as net`))
       .first()
 
+    const reminderAmounts = await Document.query()
+      .where({
+        type: 'reminder',
+        organizationId: ctx.auth.user?.organization.id,
+        status: 'pending',
+      })
+      .select(Database.raw(`sum((data->>'total')::float) as total`))
+      .select(Database.raw(`sum((data->>'net')::float) as net`))
+      .first()
+
+    console.log(reminderAmounts?.$extras)
+
     return {
       invoices: {
         net: invoiceAmounts?.$extras.net,
         total: invoiceAmounts?.$extras.total,
         pending: pendingInvoices,
       },
+      reminders: {
+        pending: pendingReminders,
+        total: reminderAmounts?.$extras.total,
+        net: reminderAmounts?.$extras.net,
+      },
+
       offers: {
         net: offerAmounts?.$extras.net,
         total: offerAmounts?.$extras.total,

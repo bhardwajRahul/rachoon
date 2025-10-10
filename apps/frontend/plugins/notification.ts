@@ -7,8 +7,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.use(Vue3Toastify, {
     useHandler: (instance) => instance.use(router),
-    position: "top-right",
+    position: "bottom-right",
+    theme: "auto",
     autoClose: 3000,
+    hideProgressBar: true,
     clearOnUrlChange: false, // This prevents clearing on navigation
     // other props...
   } as ToastContainerOptions);

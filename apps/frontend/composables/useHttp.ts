@@ -35,15 +35,8 @@ export default class HttpClient {
         headers: headers,
       });
 
-      const { $toast } = useNuxtApp();
-
       if (notify) {
-        $toast(`<div class="text-sm"><div><strong>${notify.title}</strong></div><div>${notify.text}</div></div>`, {
-          theme: "auto",
-          type: notify.type,
-          position: "bottom-right",
-          dangerouslyHTMLString: true,
-        });
+        useToast(notify.title, notify.text, notify.type || "success");
       }
 
       return { body: camelcaseKeys(res._data as any, { deep: true }), headers: res.headers };
@@ -65,13 +58,6 @@ export default class HttpClient {
         message = "Email and password do not match";
       }
     }
-    const { $toast } = useNuxtApp();
-
-    $toast(`<div class="text-sm"><div><strong>${title}</strong></div><div>${text}</div></div>`, {
-      theme: "auto",
-      type: "error",
-      position: "bottom-right",
-      dangerouslyHTMLString: true,
-    });
+    useToast(title, message, "error");
   }
 }

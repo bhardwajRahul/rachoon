@@ -5,16 +5,51 @@ import * as datefns from "date-fns";
 const props = defineProps({
   clientId: { type: String, default: "" },
   list: { type: Array as () => Document[], default: null },
+  showHeader: { type: Boolean, default: true },
 });
 
 const controller = () => useDocument();
 if (props.clientId && props.clientId !== "") {
   controller().listForClient(props.clientId);
 } else {
-  controller().list();
+  if (!props.list) {
+    controller().list();
+  } else {
+    controller().items = props.list;
+  }
 }
 controller().watchSearch();
 const icons = { offers: "fa-file-contract", invoices: "fa-file-invoice", reminders: "fa-file-lines" };
+
+const getStatusClass = (row: Document): string => {
+  if (row.overdue) return "error";
+  if (row.status === "accepted") return "info";
+  if (row.status === "paid") return "success";
+  if (row.invoices.length > 0) {
+    const sum = row.invoices.reduce((p, c) => (p += c.data.net), 0);
+    return sum >= row.data.net ? "success" : "warning";
+  }
+
+  return "";
+};
+
+const getStatusIcon = (row: Document): string => {
+  if (row.invoices.length > 0) {
+    return "fa solid fa-check";
+  }
+  return row.status == "pending" ? "fa-regular fa-clock" : "fa-solid fa-check";
+};
+
+const getStatusTooltip = (row: Document): string => {
+  if (row.overdue) return "Overdue";
+  if (row.status === "accepted") return "Accepted";
+  if (row.status === "paid") return "Paid";
+  if (row.invoices.length > 0) {
+    const sum = row.invoices.reduce((p, c) => (p += c.data.net), 0);
+    return sum >= row.data.net ? "Fully invoiced" : `${useFormat.toCurrency(sum)} invoiced`;
+  }
+  return row.status == "pending" ? "Pending" : "Sent";
+};
 
 const columns = [
   { label: "# Number", field: "number", class: "", width: "250" },
@@ -33,6 +68,7 @@ const columns = [
 
   <div v-else>
     <FormHeader
+      v-if="$props.showHeader"
       :title="controller().type(true)"
       :icon="icons[controller().type() as string]"
       :divider="false"
@@ -89,69 +125,52 @@ const columns = [
         @sort="(sort) => controller().sort(sort)"
       >
         <template #number="{ row }">
-          <NuxtLink :href="'/' + controller().type() + '/' + row.id" class="link">
-            {{ row.number }}
-          </NuxtLink>
+          <div class="indicator">
+            <span class="indicator-item badge badge-xs badge-error" v-if="row.totalReminders > 0">{{ row.totalReminders }}</span>
+            <NuxtLink :href="'/' + controller().type() + '/' + row.id" class="link">
+              {{ row.number }}
+            </NuxtLink>
+          </div>
           <br />
           <small class="opacity-50">last modified {{ useFormat.date(row.updatedAt) }}</small>
         </template>
         <template #recurring="{ row }">
-          <span
-            :class="`btn btn-circle btn-xs ${row.isRecurring ? 'btn-warning' : 'btn-neutral opacity-30'}`"
-            v-if="row.isRecurring || row.isFromRecurring"
-          >
-            <FaIcon icon="fa-solid fa-repeat" />
+          <span :class="`iconbadge ${row.isRecurring ? 'warning' : ''}`" v-if="row.isRecurring || row.isFromRecurring">
+            <NuxtLink :href="`/invoices/${row.recurringId}`" v-if="row.isFromRecurring">
+              <FaIcon icon="fa-solid fa-repeat" />
+            </NuxtLink>
+            <FaIcon icon="fa-solid fa-repeat" v-else />
+          </span>
+          <span v-if="row.offer?.id !== ''" class="iconbadge">
+            <NuxtLink :href="`/offers/${row.offer?.id}`">
+              <FaIcon icon="fa-solid fa-file-export" />
+            </NuxtLink>
           </span>
         </template>
         <template #client="{ row }">
           {{ row.client.name }}
           <br />
           <small class="opacity-50">{{ row.client.number }}</small>
-          <span v-if="row.offer.id !== ''" class="text-warning">
-            <br />
-            <span class="badge badge-xs badge-outline badge-warning opacity-30 py-2 mr-2">
-              <NuxtLink :href="`/offers/${row.offer.id}`">
-                {{ row.offer.number }} -
-                <strong>{{ useFormat.toCurrency(row.offer.data.total) }}</strong>
-              </NuxtLink>
-            </span>
-          </span>
-          <span v-if="row.invoices.length > 0" class="text-warning">
-            {{ useFormat.toCurrency(row.invoices.reduce((p, c) => (p += c.data.total), 0)) }}
-            <br />
-            <span class="badge badge-xs badge-outline badge-warning opacity-30 py-2 mr-2" v-for="inv in row.invoices">
-              <NuxtLink :href="`/invoices/${inv.id}`">
-                {{ inv.number }}
-              </NuxtLink>
-            </span>
-          </span>
-          <span v-else></span>
         </template>
         <template #status="{ row }">
-          <span
-            class="btn btn-circle btn-xs mr-2"
-            :class="row.status === 'pending' ? (row.overdue ? 'btn-error' : 'btn-neutral') : 'btn-success'"
-            @click="controller().setStatus(row)"
-          >
-            <FaIcon :icon="row.status == 'pending' ? 'fa-regular fa-clock' : 'fa-check'" />
-          </span>
+          <div class="tooltip" :data-tip="getStatusTooltip(row)">
+            <span class="iconbadge" :class="getStatusClass(row)" @click="controller().setStatus(row)">
+              <FaIcon :icon="getStatusIcon(row)" />
+            </span>
+          </div>
         </template>
         <template #data.dueDate="{ row }">
-          <span :class="row.status === 'pending' && datefns.isPast(row.data.dueDate) ? 'text-error' : ''">
+          <span :class="row.status === 'pending' && datefns.isPast(row.data.dueDate) ? 'text-rose-500' : ''">
             {{ useFormat.date(row.data.dueDate) }}
           </span>
-          <br />
-          <span class="badge badge-sm badge-neutral" v-if="row.totalReminders > 0">{{ row.totalReminders }} Reminders</span>
         </template>
         <template #data.net="{ row }">
           {{ useFormat.toCurrency(row.data.net) }}
-          <br />
-          &nbsp;
         </template>
         <template #data.total="{ row }">
-          <span>{{ useFormat.toCurrency(row.data.total) }}</span>
-          <br />
-          <small class="opacity-50">taxes {{ useFormat.toCurrency(row.data.total - row.data.net) }}</small>
+          <div class="tooltip" :data-tip="`taxes ${useFormat.toCurrency(row.data.total - row.data.net)}`">
+            <span>{{ useFormat.toCurrency(row.data.total) }}</span>
+          </div>
         </template>
         <template #actions="{ row }">
           <ContextMenu>
@@ -162,23 +181,30 @@ const columns = [
               </NuxtLink>
             </li>
             <li>
-              <label @click="controller().download(i)">
+              <label @click="controller().download(row)">
                 <FaIcon icon="fa-regular fa-file-pdf" />
                 Download PDF
               </label>
-            </li>
-
-            <li v-if="row.type === 'offer' && row.invoices.reduce((p, c) => (p += c.data.net), 0) < row.data.net">
-              <NuxtLink :to="`/invoices/new?offer=${row.id}`">
-                <FaIcon icon="fa-solid fa-money-bill-transfer" />
-                Create Invoice
-              </NuxtLink>
             </li>
 
             <li v-if="row.type === 'invoice'">
               <NuxtLink :href="`/reminders/new?invoice=${row.id}`">
                 <FaIcon icon="fa-solid fa-bullhorn" />
                 Create Reminder
+              </NuxtLink>
+            </li>
+
+            <li>
+              <label @click="controller().duplicate(row.id)" v-if="row.type !== 'reminder'">
+                <FaIcon icon="fa-regular fa-copy" />
+                Duplicate {{ controller().singularType(true) }}
+              </label>
+            </li>
+
+            <li v-if="row.type === 'offer' && row.invoices.reduce((p, c) => (p += c.data.net), 0) < row.data.net">
+              <NuxtLink :to="`/invoices/new?offer=${row.id}`">
+                <FaIcon icon="fa-solid fa-file-export" />
+                Create Invoice
               </NuxtLink>
             </li>
 

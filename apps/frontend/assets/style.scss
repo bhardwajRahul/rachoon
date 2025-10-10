@@ -324,3 +324,29 @@ vfm-fade-enter-active,
     @apply scale-90 translate-y-4;
   }
 }
+
+.iconbadge {
+  @apply badge opacity-30 badge-sm h-7 w-7 bg-base-300;
+  &.error {
+    @apply text-rose-500 bg-rose-950 bg-opacity-50 opacity-100;
+  }
+  &.success {
+    @apply text-green-500 bg-green-950 bg-opacity-50 opacity-100;
+  }
+  &.warning {
+    @apply text-yellow-500 bg-yellow-950 bg-opacity-50 opacity-100;
+  }
+
+  &.info {
+    @apply text-sky-500 bg-sky-950 bg-opacity-50 opacity-100;
+  }
+}
+
+.Toastify__toast-theme--dark {
+  border: 1px solid;
+  background-color: #09090b;
+  border-color: #18191e;
+  .text-sm {
+    font-size: 0.8rem;
+  }
+}

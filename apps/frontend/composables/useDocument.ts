@@ -24,11 +24,9 @@ class DocumentStore extends Base<Document> {
 
   isOfferToConvert = () => this.isNew() && useRoute().query.offer;
   isInvoice = () => this.singularType() === "invoice";
-  isOffer = () => this.singularType() === "offer"
+  isOffer = () => this.singularType() === "offer";
   isReminder = () => this.singularType() === "reminder";
-  isDisabled = () => false
-
-
+  isDisabled = () => false;
 
   setTemplate = (id: string) => {
     this.item.value.templateId = id;
@@ -61,6 +59,10 @@ class DocumentStore extends Base<Document> {
   };
 
   setStatus = (d: Document) => {
+    if (d.invoices.length > 0) {
+      useToast("Cannot change status", "Offer is already invoiced.", "warning");
+      return;
+    }
     const status = d.status === "pending" ? (d.type === "invoice" ? "paid" : "accepted") : "pending";
     d.setStatus(status);
     useApi().documents(this.singularType()).setStatus(d.id, status);
@@ -188,7 +190,11 @@ class DocumentStore extends Base<Document> {
       await useApi()
         .documents("invoice-or-offer")
         .delete(id || this.item.value.id);
-      useRouter().replace(`/${this.type()}/`);
+      if (id) {
+        this.items.value = this.items.value.filter((i) => i.id !== id);
+      } else {
+        useRouter().replace(`/${this.type()}/`);
+      }
     }, `Are you sure you want to delete ${this.singularType()} ${this.item.value.number}?`);
   };
 
