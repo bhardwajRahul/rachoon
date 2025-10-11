@@ -2,14 +2,16 @@
 //
 export default defineNuxtConfig({
   css: ["~/assets/style.scss", "@fortawesome/fontawesome-svg-core/styles.css"],
-  devtools: { enabled: true },
-  ssr: false,
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
-  runtimeConfig: {
-    public: {
-      apiURL: process.env.API_URL || "http://localhost:3333",
+  ssr: false,
+  experimental: {
+    payloadExtraction: false,
+  },
+  nitro: {
+    routeRules: {
+      "/app/envs": { proxy: "/api/envs" },
     },
   },
   modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss"],

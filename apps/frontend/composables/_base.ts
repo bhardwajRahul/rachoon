@@ -1,6 +1,6 @@
 import { type IBase } from "@repo/common/Base";
 import type { getAllFunc } from "./useApi";
-import { useDebounce, useDebounceFn, watchDebounced } from "@vueuse/core";
+import { watchDebounced } from "@vueuse/core";
 
 export default class Base<T extends IBase> {
   constructor(

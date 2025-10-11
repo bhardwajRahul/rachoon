@@ -1,5 +1,5 @@
 class AuthStore {
-  key = () => localStorage.getItem("auth-token");
+  key = () => (process.server ? null : localStorage.getItem("auth-token"));
   loading = ref(false);
   loadingLogin = ref(false);
   org = ref(null);

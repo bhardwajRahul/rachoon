@@ -16,7 +16,11 @@ export default class HttpClient {
     opts: { method: FetchMethod; body?: any },
     notify: false | { title: string; text: string; type?: string } = false,
   ) => {
-    const baseUrl = useRuntimeConfig().public.apiURL;
+    await useEnvs().init();
+    if (useEnvs().envs === null) {
+      return {};
+    }
+    const baseUrl = useEnvs().envs.BASE_URL;
 
     const origin = useRequestURL().origin;
     try {

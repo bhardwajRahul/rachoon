@@ -4,6 +4,7 @@ class AppStore {
   confirmResult: Ref<null | boolean> = ref(null);
   confirmQuesion = ref("");
   cheatsheetModal = ref(null);
+  baseUrl = ref("");
 
   navigate = ref("");
   timer = ref<NodeJS.Timeout | null>(null);
