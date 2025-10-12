@@ -1,7 +1,6 @@
 #!/bin/sh
 
-cd /app/backend || exit
-pnpm install -P --frozen-lockfile --force
+cd /app/backend/apps/backend || exit
 node ace migration:run --force
 node ace db:seed
 PORT=3333 node server.js &

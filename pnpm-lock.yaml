@@ -36,7 +36,7 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9
       '@repo/common':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/common
       adonis-lucid-soft-deletes:
         specifier: ^1.4.4
@@ -157,7 +157,7 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(vue@3.4.27)
       '@repo/common':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/common
       '@tailwindcss/typography':
         specifier: ^0.5.13
@@ -260,9 +260,17 @@ importers:
         specifier: ^3.3.0
         version: 3.7.2
     devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/lodash':
         specifier: ^4.17.1
         version: 4.17.1
+      typescript:
+        specifier: latest
+        version: 5.9.3
+
+  packages/typescript-config: {}
 
 packages:
 
@@ -1038,7 +1046,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.4
       '@babel/types': 7.28.4
     dev: false
 
@@ -1066,7 +1074,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.3
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
       debug: 4.4.3
@@ -13252,6 +13260,12 @@ packages:
 
   /typescript@5.1.6:
     resolution: {integrity: sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: true
+
+  /typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true

@@ -1,5 +1,10 @@
-import { Client } from "./Client";
-import { DCType, Document, DocumentType, ValueType } from "./Document";
+import { Client } from "@repo/common/Client";
+import {
+  DCType,
+  Document,
+  DocumentType,
+  ValueType,
+} from "@repo/common/Document";
 
 const client = new Client();
 client.name = "Example client";

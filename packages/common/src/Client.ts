@@ -1,5 +1,5 @@
 import _ from "lodash";
-import Helpers from "./Helpers";
+import Helpers from "@repo/common/Helpers";
 
 export interface ClientData {
   info: {

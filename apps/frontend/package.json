@@ -17,7 +17,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@nuxtjs/tailwindcss": "^6.12.0",
     "@pinia/nuxt": "^0.5.1",
-    "@repo/common": "workspace:^",
+    "@repo/common": "workspace:*",
     "@tailwindcss/typography": "^0.5.13",
     "@tiptap/extension-placeholder": "^2.3.1",
     "@tiptap/starter-kit": "^2.3.1",
