@@ -1,14 +1,14 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Document from 'App/Models/Document'
-import { DocumentStatus } from '@repo/common/Document'
+import { DocumentStatus, DocumentType } from '@repo/common/Document'
 
 export default class DashboardController {
   public async index(ctx: HttpContextContract) {
     const pendingInvoices = await Document.query()
       .where({
-        type: 'invoice',
-        status: 'pending',
+        type: DocumentType.Invoice,
+        status: DocumentStatus.Pending,
         organizationId: ctx.auth.user?.organization.id,
       })
       .preload('client')
@@ -19,7 +19,7 @@ export default class DashboardController {
 
     const pendingOffers = await Document.query()
       .where({
-        type: 'offer',
+        type: DocumentType.Offer,
         status: DocumentStatus.Pending,
         organizationId: ctx.auth.user?.organization.id,
       })
@@ -31,7 +31,7 @@ export default class DashboardController {
 
     const pendingReminders = await Document.query()
       .where({
-        type: 'reminder',
+        type: DocumentType.Reminder,
         status: DocumentStatus.Pending,
         organizationId: ctx.auth.user?.organization.id,
       })
@@ -41,20 +41,28 @@ export default class DashboardController {
       .orderBy('created_at', 'desc')
 
     const invoiceAmounts = await Document.query()
-      .where({ type: 'invoice', organizationId: ctx.auth.user?.organization.id, status: 'paid' })
+      .where({
+        type: DocumentType.Invoice,
+        organizationId: ctx.auth.user?.organization.id,
+        status: DocumentStatus.Paid,
+      })
       .select(Database.raw(`sum((data->>'total')::float) as total`))
       .select(Database.raw(`sum((data->>'net')::float) as net`))
       .first()
 
     const offerAmounts = await Document.query()
-      .where({ type: 'offer', organizationId: ctx.auth.user?.organization.id, status: 'accepted' })
+      .where({
+        type: DocumentType.Offer,
+        organizationId: ctx.auth.user?.organization.id,
+        status: DocumentStatus.Accepted,
+      })
       .select(Database.raw(`sum((data->>'total')::float) as total`))
       .select(Database.raw(`sum((data->>'net')::float) as net`))
       .first()
 
     const reminderAmounts = await Document.query()
       .where({
-        type: 'reminder',
+        type: DocumentType.Reminder,
         organizationId: ctx.auth.user?.organization.id,
         status: DocumentStatus.Pending,
       })

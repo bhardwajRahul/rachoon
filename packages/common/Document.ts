@@ -1,5 +1,5 @@
 import * as dateFns from "date-fns";
-import { ClientType } from "./Client";
+import { Client } from "./Client";
 import _ from "lodash";
 import Helpers from "./Helpers";
 
@@ -11,23 +11,36 @@ export enum DocumentStatus {
   Overdue = 4,
 }
 
-export interface RecurringType {
-  id: string;
-  cron: string;
-  active: boolean;
-  startDate: Date;
-  nextRun: Date;
-  invoiceId: string;
+export enum DocumentType {
+  Invoice = 1,
+  Offer = 2,
+  Reminder = 3,
 }
 
-class Recurring implements RecurringType {
+export enum ConvertOption {
+  Full = "full",
+  Partial = "partial",
+  Final = "final",
+}
+
+export enum ValueType {
+  Percent = "percent",
+  Fixed = "fixed",
+}
+
+export enum DCType {
+  Discount = "discount",
+  Charge = "charge",
+}
+
+class Recurring {
   id: string = "";
   cron: string = "";
   active: false;
   startDate: Date = new Date();
   nextRun: Date = new Date();
   invoiceId: string = "";
-  invoice: DocumentType;
+  invoice: Document;
 
   constructor(json?: any) {
     if (json) {
@@ -94,43 +107,22 @@ export interface DocumentData {
   taxOption: TaxOption;
 }
 
-export type DocumentType = {
-  id?: string;
-  clientId: string | null;
-  number: string;
-  status: DocumentStatus;
-  offerId: string | null;
-  invoiceId: string | null;
-  templateId: string | null;
-  isRecurring: boolean;
-  isFromRecurring: boolean;
-  totalReminders: number;
-  offer: DocumentType;
-  invoices: DocumentType[];
-  overdue: boolean;
-  data: DocumentData;
-  createdAt: Date;
-  updatedAt: Date;
-  recurringInvoice: RecurringType | null;
-  type: string;
-};
-
-class Document implements DocumentType {
+class Document {
   id: string = "";
-  clientId = null;
-  client: ClientType;
+  clientId: null | string = null;
+  client: null | Client = null;
   number: string = "";
   status: DocumentStatus = DocumentStatus.Pending;
-  offerId = null;
-  templateId = null;
+  offerId: null | string = null;
+  templateId: null | string = null;
   invoiceId = null;
   totalReminders: 0;
   isRecurring = false;
   isFromRecurring = false;
   overdue: false;
-  offer: DocumentType;
-  invoices: DocumentType[] = [];
-  recurringInvoice: RecurringType | null = null;
+  offer: Document;
+  invoices: Document[] = [];
+  recurringInvoice: Recurring | null = null;
   data = {
     title: "",
     positions: [] as Position[],
@@ -147,7 +139,7 @@ class Document implements DocumentType {
     taxOption: {} as TaxOption,
   };
 
-  type = "";
+  type = DocumentType.Invoice;
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
   timeout: any;
@@ -158,11 +150,15 @@ class Document implements DocumentType {
 
       this.data.positions.map((p) => (p.focused = false));
       this.offer = new Document(json.offer);
+
       this.invoices = (json.invoices || []).map((i) => new Document(i));
       this.data.date = new Date(Date.parse(json.data.date.toString()));
       this.data.dueDate = new Date(Date.parse(json.data.dueDate.toString()));
-      if (this.recurringInvoice) {
+      if (json.recurringInvoice) {
         this.recurringInvoice = new Recurring(json.recurringInvoice);
+      }
+      if (json.client) {
+        this.client = new Client(json.client);
       }
     }
   }
@@ -182,23 +178,23 @@ class Document implements DocumentType {
   ) {
     this.data.taxOption = offer.data.taxOption;
     this.removePositions();
-    if (option === "partial") {
+    if (option === ConvertOption.Partial) {
       offer.data.positions.forEach((position) => {
         let p = { ...position };
-        if (valueType === "percent") p.price = (p.price / 100) * value;
-        if (valueType === "fixed")
+        if (valueType === ValueType.Percent) p.price = (p.price / 100) * value;
+        if (valueType === ValueType.Fixed)
           p.price = ((value / 100) * p.totalPercentage) / p.quantity;
         p.price = Math.round(p.price * 100) / 100;
         this.data.positions.push(p);
       });
     }
-    if (option === "full") {
+    if (option === ConvertOption.Full) {
       offer.data.positions.forEach((position) => {
         const p = { ...position };
         this.addPosition(p);
       });
     }
-    if (option === "final") {
+    if (option === ConvertOption.Final) {
       const previousNet = offer.invoices.reduce((p, c) => p + c.data.net, 0);
       const newNet = offer.data.net - previousNet;
       offer.data.positions.map((position) => {
@@ -236,7 +232,8 @@ class Document implements DocumentType {
   };
 
   convertedFromOffer = () => this.offerId !== null && this.offerId !== "";
-  disabled = () => this.convertedFromOffer() || this.type === "reminder";
+  disabled = () =>
+    this.convertedFromOffer() || this.type === DocumentType.Reminder;
 
   calcPositions = () => {
     let sumPositions = this.data.positions.reduce(
@@ -369,8 +366,8 @@ class Document implements DocumentType {
       id: Date.now().toString(),
       title: "",
       value: 0,
-      type: "discount",
-      valueType: "percent",
+      type: DCType.Discount,
+      valueType: ValueType.Percent,
       amount: 0,
     },
   ) {

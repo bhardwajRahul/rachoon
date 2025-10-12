@@ -1,5 +1,5 @@
 import { Client, type ClientType } from "~~/models/client";
-import { Document, DocumentStatus, Recurring, type TaxOption } from "~~/models/document";
+import { DCType, Document, DocumentStatus, DocumentType, Recurring, ValueType, type TaxOption, ConvertOption } from "~~/models/document";
 import Helpers from "@repo/common/Helpers";
 
 import * as dateFns from "date-fns";
@@ -16,9 +16,9 @@ class DocumentStore extends Base<Document> {
   reminderInvoice = ref(new Document());
   recurring = ref(new Recurring());
 
-  offerToInvoiceOption = ref("full");
+  offerToInvoiceOption = ref(ConvertOption.Full);
   offerToInvoiceValue = ref(1);
-  offerToInvoiceValueType = ref("percent");
+  offerToInvoiceValueType = ref(ValueType.Percent);
 
   parentList = this.list;
 
@@ -41,7 +41,7 @@ class DocumentStore extends Base<Document> {
         this.item.value.addDiscountCharge({
           id: Date.now().toString(),
           title: "Client discount",
-          type: "discount",
+          type: DCType.Discount,
           value: client.data.conditions.discount.value,
           valueType: client.data.conditions.discount.valueType,
           amount: 0,
@@ -64,19 +64,27 @@ class DocumentStore extends Base<Document> {
       return;
     }
     const status =
-      d.status === DocumentStatus.Pending ? (d.type === "invoice" ? DocumentStatus.Paid : DocumentStatus.Accepted) : DocumentStatus.Pending;
+      d.status === DocumentStatus.Pending
+        ? d.type === DocumentType.Invoice
+          ? DocumentStatus.Paid
+          : DocumentStatus.Accepted
+        : DocumentStatus.Pending;
     d.setStatus(status);
-    useApi().documents(this.singularType()).setStatus(d.id, status);
+    useApi().documents(this.docType()).setStatus(d.id, status);
   };
 
   list = async () => {
-    this.getAllFunc = useApi().documents(this.singularType()).getAll;
+    this.getAllFunc = useApi().documents(this.docType()).getAll;
     this.parentList();
+  };
+
+  docType = (): DocumentType => {
+    return DocumentType[this.singularType(true) as keyof typeof DocumentType];
   };
 
   save = async () => {
     // super.save();
-    const ioo = await useApi().documents(this.singularType()).saveOrUpdate(this.item.value, !this.isNew());
+    const ioo = await useApi().documents(this.docType()).saveOrUpdate(this.item.value, !this.isNew());
     if (this.isNew()) {
       useRouter().replace(`/${this.type()}/${ioo.id}`);
     }
@@ -103,7 +111,7 @@ class DocumentStore extends Base<Document> {
 
   duplicate = async (id: string) => {
     this.loading.value = true;
-    const duplicate = await useApi().documents(this.singularType()).duplicate(id);
+    const duplicate = await useApi().documents(this.docType()).duplicate(id);
     useRouter().push(`/${this.type()}/${duplicate.id}`);
     this.loading.value = false;
   };
@@ -131,8 +139,8 @@ class DocumentStore extends Base<Document> {
       this.item.value.data.discountsCharges.push({
         title: "Reminder fee",
         value: 5,
-        type: "charge",
-        valueType: "fixed",
+        type: DCType.Charge,
+        valueType: ValueType.Fixed,
         amount: 0,
       });
     }
@@ -145,7 +153,7 @@ class DocumentStore extends Base<Document> {
 
   handleNew = async () => {
     this.recurring.value = new Recurring();
-    this.item.value.number = await useApi().number(this.singularType()).get();
+    this.item.value.number = await useApi().number(this.docType()).get();
     this.item.value.data.dueDate = dateFns.add(this.item.value.data.date, {
       days: useProfile().me.organization.settings[this.type()].dueDays,
     });
@@ -164,11 +172,11 @@ class DocumentStore extends Base<Document> {
     const id = useRoute().params["id"] as string;
 
     this.item.value = new Document();
-    this.item.value.type = this.singularType();
+    this.item.value.type = this.docType();
     if (this.isNew()) {
       await this.handleNew();
     } else {
-      this.item.value = Helpers.merge<Document>(this.item.value, await useApi().documents(this.singularType()).get(id));
+      this.item.value = Helpers.merge<Document>(this.item.value, await useApi().documents(this.docType()).get(id));
       if (this.item.value.recurringInvoice) {
         this.recurring.value = this.item.value.recurringInvoice;
       } else {
@@ -189,7 +197,7 @@ class DocumentStore extends Base<Document> {
   delete = async (id?: string) => {
     useApp().confirm(async () => {
       await useApi()
-        .documents("invoice-or-offer")
+        .documents(this.docType())
         .delete(id || this.item.value.id);
       if (id) {
         this.items.value = this.items.value.filter((i) => i.id !== id);
@@ -211,7 +219,7 @@ class DocumentStore extends Base<Document> {
       _.mergeWith(
         this.offer.value,
         await useApi()
-          .documents("offer")
+          .documents(DocumentType.Offer)
           .get(useRoute().query.offer as string),
       );
       this.offer.value.rebuild();
@@ -225,4 +233,4 @@ class DocumentStore extends Base<Document> {
   };
 }
 
-export default defineStore("document", () => new DocumentStore(ref(new Document()), useApi().documents("invoice").getAll));
+export default defineStore("document", () => new DocumentStore(ref(new Document()), useApi().documents(DocumentType.Invoice).getAll));

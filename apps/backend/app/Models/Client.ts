@@ -4,6 +4,7 @@ import Organization from './Organization'
 import HashIDs from 'App/Helpers/hashids'
 import Document from './Document'
 import BaseAppModel from './BaseAppModel'
+import { DocumentType } from '@repo/common/Document'
 
 export default class Client extends BaseAppModel {
   public static searchFields = ['name', 'number']
@@ -43,21 +44,21 @@ export default class Client extends BaseAppModel {
 
   @hasMany(() => Document, {
     onQuery: (query) => {
-      return query.where({ type: 'invoice' })
+      return query.where({ type: DocumentType.Invoice })
     },
   })
   public invoices: HasMany<typeof Document>
 
   @hasMany(() => Document, {
     onQuery: (query) => {
-      return query.where({ type: 'offer' })
+      return query.where({ type: DocumentType.Offer })
     },
   })
   public offers: HasMany<typeof Document>
 
   @hasMany(() => Document, {
     onQuery: (query) => {
-      return query.where({ type: 'reminder' })
+      return query.where({ type: DocumentType.Reminder })
     },
   })
   public reminders: HasMany<typeof Document>

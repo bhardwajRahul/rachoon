@@ -10,7 +10,7 @@ COPY . .
 RUN pnpm install 
 RUN pnpm run build
 RUN cd /app/apps/backend
-RUN pnpm install -P --frozen-lockfile --force
+RUN pnpm --ignore-workspace install -P --frozen-lockfile --force 
 RUN cd /app
 RUN mkdir -p /app/dist/frontend
 RUN mkdir -p /app/dist/backend

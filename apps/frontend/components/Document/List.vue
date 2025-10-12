@@ -114,6 +114,12 @@ const columns = [
           </NuxtLink>
           <FaIcon icon="fa-solid fa-repeat" v-else />
         </span>
+        <span v-if="row.invoices.length > 0" class="iconbadge">
+          <NuxtLink :href="`/invoices/?offerId=${row.id}`">
+            <FaIcon icon="fa-solid fa-file-invoice" />
+          </NuxtLink>
+        </span>
+
         <span v-if="row.offer?.id !== ''" class="iconbadge">
           <NuxtLink :href="`/offers/${row.offer?.id}`">
             <FaIcon icon="fa-solid fa-file-export" />
@@ -133,7 +139,7 @@ const columns = [
         </div>
       </template>
       <template #data.dueDate="{ row }">
-        <span :class="row.status === 'pending' && datefns.isPast(row.data.dueDate) ? 'text-rose-500' : ''">
+        <span :class="row.overdue ? 'text-rose-500' : ''">
           {{ useFormat.date(row.data.dueDate) }}
         </span>
       </template>
@@ -174,7 +180,7 @@ const columns = [
             </label>
           </li>
 
-          <li v-if="row.type === 'offer' && row.invoices.reduce((p, c) => (p += c.data.net), 0) < row.data.net">
+          <li v-if="controller().isOffer() && row.invoices.reduce((p, c) => (p += c.data.net), 0) < row.data.net">
             <NuxtLink :to="`/invoices/new?offer=${row.id}`">
               <FaIcon icon="fa-solid fa-file-export" />
               Create Invoice

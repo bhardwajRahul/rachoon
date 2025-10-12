@@ -4,18 +4,15 @@ import { DocumentValidator } from 'App/Validators/Document'
 import NumberService from 'App/Services/Number'
 import DocumentService from 'App/Services/Document'
 import RecurringInvoice from 'App/Models/RecurringInvoice'
+import { DocumentType } from '@repo/common/Document'
 
 export default class DocumentsController {
   public async index(ctx: HttpContextContract) {
-    if (!['invoice', 'offer', 'reminder'].includes(ctx.request.qs()['type'])) {
-      return ctx.response.badRequest('Type must be invoice or offer')
-    }
-
     if (ctx.request.qs()['count']) {
       return await Document.query()
         .where({
           organizationId: ctx.auth.user?.organizationId,
-          type: ctx.request.qs()['type'].toLowerCase(),
+          type: Number(ctx.request.qs()['type']),
         })
         .withTrashed()
         .getCount()
@@ -23,7 +20,7 @@ export default class DocumentsController {
     return await Document.query()
       .where({
         organizationId: ctx.auth.user?.organizationId,
-        type: ctx.request.qs()['type'].toLowerCase(),
+        type: Number(ctx.request.qs()['type']),
       })
       .if(ctx.request.qs()['clientId'], (query) => {
         query.where('client_id', ctx.request.qs()['clientId'])
@@ -43,11 +40,11 @@ export default class DocumentsController {
     const body = await ctx.request.validate(DocumentValidator)
     body.number = await NumberService.document(
       ctx.auth.user!.organizationId,
-      ctx.request.qs()['type']
+      Number(ctx.request.qs()['type'])
     )
     const document = await Document.create({
       ...body,
-      type: ctx.request.qs()['type'].toLowerCase(),
+      type: Number(ctx.request.qs()['type']),
       organizationId: ctx.auth.user?.organizationId,
     })
 

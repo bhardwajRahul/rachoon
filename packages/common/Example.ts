@@ -1,5 +1,5 @@
 import { Client } from "./Client";
-import { Document } from "./Document";
+import { DCType, Document, DocumentType, ValueType } from "./Document";
 
 const client = new Client();
 client.name = "Example client";
@@ -29,7 +29,7 @@ client.data = {
   },
 };
 const invoice = new Document();
-invoice.type = "invoice";
+invoice.type = DocumentType.Invoice;
 invoice.data.positions = [
   {
     id: Date.now(),
@@ -73,8 +73,8 @@ invoice.data.discountsCharges = [
   {
     title: "Some discount",
     value: 5,
-    type: "discount",
-    valueType: "percent",
+    type: DCType.Discount,
+    valueType: ValueType.Percent,
     amount: 10,
   },
 ];
@@ -83,7 +83,7 @@ invoice.client = client;
 invoice.calculate();
 
 const offer = new Document();
-offer.type = "offer";
+offer.type = DocumentType.Offer;
 offer.data.positions = [
   {
     id: Date.now(),
@@ -127,8 +127,8 @@ offer.data.discountsCharges = [
   {
     title: "Some discount",
     value: 5,
-    type: "discount",
-    valueType: "percent",
+    type: DCType.Discount,
+    valueType: ValueType.Percent,
     amount: 10,
   },
 ];

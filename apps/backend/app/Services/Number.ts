@@ -1,14 +1,15 @@
+import { DocumentType } from '@repo/common/Document'
 import Format from '@repo/common/Format'
 import Client from 'App/Models/Client'
 import Document from 'App/Models/Document'
 import Organization from 'App/Models/Organization'
 
 export default class Numberervice {
-  public static async document(organizationId: number, type: string) {
+  public static async document(organizationId: number, type: DocumentType) {
     const count = await Document.query()
       .where({
         organizationId: organizationId,
-        type: type.toLowerCase(),
+        type: type,
       })
       .withTrashed()
       .getCount()
@@ -17,17 +18,17 @@ export default class Numberervice {
 
     let documentNumber: any
     switch (type) {
-      case 'invoice':
+      case DocumentType.Invoice:
         documentNumber = organization.settings.invoices.number
         break
-      case 'offer':
+      case DocumentType.Offer:
         documentNumber = organization.settings.offers.number
         break
-      case 'reminder':
+      case DocumentType.Reminder:
         documentNumber = organization.settings.reminders.number
         break
       default:
-        throw new Error('Type must be invoice, offer or document')
+        throw new Error('Type must be invoice, offer or reminder')
     }
 
     return Format.number(documentNumber, Number(count))

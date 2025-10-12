@@ -82,7 +82,7 @@ export default class UsersSchema extends BaseSchema {
 
     this.schema.createTable('documents', (table) => {
       table.increments('id').primary()
-      table.string('type', 10)
+      table.smallint('type')
       table.string('number', 30)
       table.smallint('status')
       table.jsonb('data').defaultTo('{}')

@@ -1,6 +1,6 @@
 import { Dashboard } from "~~/models/dashboard";
 import { Client, type ClientType } from "~~/models/client";
-import { Document, DocumentStatus, type DocumentType } from "~~/models/document";
+import { Document, DocumentStatus, DocumentType } from "~~/models/document";
 import { type OrganizationType } from "~~/models/organization";
 import { User, type UserType } from "~~/models/user";
 import { Template, type TemplateType } from "~/models/template";
@@ -68,7 +68,7 @@ export default function useApi() {
       };
     },
 
-    number: (type: string, endpoint: string = "/api/number") => {
+    number: (type: string | DocumentType, endpoint: string = "/api/number") => {
       return {
         get: async (): Promise<string> => (await useHttp.get(`${endpoint}/${type}`)).body,
       };
@@ -131,12 +131,12 @@ export default function useApi() {
       };
     },
 
-    documents: (type: string, endpoint: string = "/api/documents") => {
+    documents: (type: DocumentType, endpoint: string = "/api/documents") => {
       return {
-        saveOrUpdate: async (document: DocumentType, update: boolean = false): Promise<DocumentType> => {
+        saveOrUpdate: async (document: Document, update: boolean = false): Promise<Document> => {
           if (update) {
             await useHttp.put(`${endpoint}/${document.id}`, document, {
-              title: `${type} ${document.number}`,
+              title: `${DocumentType[type]} ${document.number}`,
               text: "Successfully updated",
             });
             return document;
@@ -144,10 +144,10 @@ export default function useApi() {
             return (
               await useHttp.post(`${endpoint}?type=${type}`, document, {
                 title: document.number,
-                text: `${type} saved successfully`,
+                text: `${DocumentType[type]} saved successfully`,
                 type: "success",
               })
-            ).body as DocumentType;
+            ).body;
           }
         },
         getAll: async (

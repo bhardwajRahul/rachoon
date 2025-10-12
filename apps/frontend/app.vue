@@ -2,6 +2,7 @@
 useHead({
   title: "rachoon",
 });
+await useInfo().init();
 await useProfile().init();
 useApp().shortcuts();
 </script>
