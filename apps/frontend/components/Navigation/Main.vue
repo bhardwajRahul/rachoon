@@ -8,7 +8,7 @@ const isActive = (path: string) => {
   <ul class="menu gap-1">
     <li>
       <NuxtLink href="/" :class="useRoute().fullPath === '/' ? 'active' : ''">
-        <FaIcon icon="fa-solid fa-home" />
+        <FaIcon icon="fa-solid fa-gauge-high" />
         Dashboard
       </NuxtLink>
     </li>

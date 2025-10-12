@@ -64,8 +64,8 @@ const convert = () => {
           </label>
         </div>
 
-        <div class="tooltip tooltip-bottom" data-tip="Download PDF">
-          <label class="btn btn-sm btn-ghost" @click="controller().download()" v-if="!controller().isNew() && controller().mustSave <= 1">
+        <div class="tooltip tooltip-bottom" data-tip="Download PDF" v-if="!controller().isNew() && controller().mustSave <= 1">
+          <label class="btn btn-sm btn-ghost" @click="controller().download()">
             <FaIcon icon="fa-solid fa-file-pdf" />
           </label>
         </div>
@@ -76,12 +76,8 @@ const convert = () => {
           </label>
         </div>
 
-        <div class="tooltip tooltip-bottom" data-tip="Create reminder">
-          <NuxtLink
-            :to="`/reminders/new?invoice=${controller().item.id}`"
-            class="btn btn-sm btn-ghost btn-circle"
-            v-if="!controller().isNew() && controller().isInvoice()"
-          >
+        <div class="tooltip tooltip-bottom" data-tip="Create reminder" v-if="!controller().isNew() && controller().isInvoice()">
+          <NuxtLink :to="`/reminders/new?invoice=${controller().item.id}`" class="btn btn-sm btn-ghost btn-circle">
             <FaIcon icon="fa-solid fa-file-lines" />
           </NuxtLink>
         </div>
