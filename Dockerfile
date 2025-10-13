@@ -1,8 +1,8 @@
-FROM zenika/alpine-chrome 
+FROM node:23-alpine
 
 USER root
 
-RUN apk add --no-cache --update nodejs npm graphicsmagick ghostscript caddy
+RUN apk add --no-cache --update graphicsmagick ghostscript caddy
 
 WORKDIR /app
 COPY ./Caddyfile .

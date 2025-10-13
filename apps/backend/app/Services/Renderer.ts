@@ -1,5 +1,5 @@
 import { PDFiumLibrary, PDFiumPageRenderOptions } from '@hyzyla/pdfium'
-import { DocumentType, Locale } from '@repo/common'
+import { Locale } from '@repo/common'
 import { Document as CommonDocument } from '@repo/common'
 import Template from 'App/Models/Template'
 import User from 'App/Models/User'
@@ -44,10 +44,13 @@ export default class Renderer {
 
     const longDate = (value: any): string => Format.longDate(new Date(value), loc)
 
+    const title = org.settings[CommonDocument.getTypeString(data.type, true, true)].title
+    nunjucks.configure({ autoescape: false })
     return nunjucks.renderString(template.html, {
       document: new CommonDocument(data),
       template: template,
       organization: org,
+      title: title,
       user: user,
       t: t,
       format: {
@@ -63,79 +66,38 @@ export default class Renderer {
     isImage: boolean = false,
     downScaleFactor: number = 1
   ): Promise<string[]> {
-    const { browser, page } = await this.getBrowserAndPage()
-
-    await page.setContent(html)
-    await page.evaluateHandle('document.fonts.ready')
-
-    const pdfOptions = {
-      scale: 1,
-      printBackground: true,
-      preferCSSPageSize: true,
-    }
-    try {
-      const pdf = await page.pdf(pdfOptions)
-      const buffer = Buffer.from(pdf)
-
-      if (isImage) {
-        const library = await PDFiumLibrary.init()
-        const doc = await library.loadDocument(buffer)
-        const images: any = []
-        for (const page of doc.pages()) {
-          const p = await page.render({
-            scale: 3,
-            render: (options) => this.renderFunction(options, downScaleFactor),
-          })
-          images.push('data:image/png;base64' + ',' + Buffer.from(p.data).toString('base64'))
-        }
-        return images
+    const f = new FormData()
+    f.append('files', new Blob([html], { type: 'text/html' }), 'index.html')
+    f.append('printBackground', 'true')
+    f.append('marginTop', '0')
+    f.append('marginBottom', '0')
+    f.append('marginLeft', '0')
+    f.append('marginRight', '0')
+    f.append('preferCssPageSize', 'true')
+    f.append('generateDocumentOutline', 'true')
+    const res = await fetch(
+      `${process.env.GOTENBERG_URL || 'http://gotenberg'}/forms/chromium/convert/html`,
+      {
+        method: 'POST',
+        body: f,
       }
+    )
+    const buffer = Buffer.from(await res.arrayBuffer())
 
-      return ['data:application/pdf;base64,' + buffer.toString('base64')]
-    } catch (e) {
-      console.error(e)
-    } finally {
-      await browser.close()
+    if (isImage) {
+      const library = await PDFiumLibrary.init()
+      const doc = await library.loadDocument(buffer)
+      const images: any = []
+      for (const page of doc.pages()) {
+        const p = await page.render({
+          scale: 3,
+          render: (options) => this.renderFunction(options, downScaleFactor),
+        })
+        images.push('data:image/png;base64' + ',' + Buffer.from(p.data).toString('base64'))
+      }
+      return images
     }
-    return []
-  }
 
-  /**
-   *
-   * @param path The file path to save the PDF to. If path is a relative path, then it is resolved relative to current
-   * working directory. If no path is provided, the PDF won't be saved to the disk.
-   */
-  public static async renderFromHtmlToFile(html: string, path: string) {
-    const { browser, page } = await this.getBrowserAndPage()
-
-    await page.setContent(html, {})
-
-    const pdfOptions = {
-      format: 'A4',
-    }
-    await page.pdf({
-      ...pdfOptions,
-      path,
-    })
-    await browser.close()
-  }
-
-  private static async getBrowserAndPage() {
-    const minimalArgs = [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--no-first-run',
-      '--no-zygote',
-      '--disable-gpu',
-    ]
-    const browser = await chromium.launch({
-      args: minimalArgs,
-      executablePath: '/usr/bin/chromium-browser',
-    })
-    const page = await browser.newPage()
-
-    return { browser, page }
+    return ['data:application/pdf;base64,' + buffer.toString('base64')]
   }
 }

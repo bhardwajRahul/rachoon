@@ -65,7 +65,7 @@ export default class TemplatessController {
       .firstOrFail()
 
     template.merge(body)
-    // template.thumbnail = await this.generateThumbnail(ctx, template)
+    template.thumbnail = await this.generateThumbnail(ctx, template)
 
     await template.save()
     if (template.default) {
