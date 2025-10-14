@@ -56,12 +56,12 @@ useProfile().newPasswordRepeat = null;
       <div class="form-control">
         <input
           type="file"
-          class="file-input file-input-bordered"
+          class="file-input file-input-bordered file-input-xs"
           accept=".jpeg,.jpg,.png,image/jpeg,image/png"
           aria-label="upload image button"
           @change="useProfile().selectFile"
         />
-        <label class="label">
+        <label class="label opacity-50">
           <span class="label-text-alt">image/jpeg, image/png</span>
           <span class="label-text-alt">max 5kb</span>
         </label>

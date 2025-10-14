@@ -27,6 +27,7 @@ export default class DocumentsController {
       .preload('client')
       .preload('offer')
       .preload('invoices')
+      .preload('overdueInvoice')
       .preload('recurringInvoice')
       .withCount('reminders', (query) => query.as('totalReminders'))
       .withScopes((scopes) => scopes.sortBy(ctx, Document))

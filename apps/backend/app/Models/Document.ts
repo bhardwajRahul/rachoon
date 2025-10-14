@@ -34,7 +34,7 @@ export default class Document extends BaseAppModel {
   public totalReminders: number
   public static searchFields = ['number', 'data.dueDate', 'data.net', 'data.total']
   public static sortFields = ['number', 'status', 'data.dueDate', 'data.net', 'data.total']
-  public static filterFields = ['clientId']
+  public static filterFields = ['clientId', 'offerId', 'invoiceId']
 
   @computed()
   public get overdue() {
@@ -116,6 +116,9 @@ export default class Document extends BaseAppModel {
 
   @hasOne(() => RecurringInvoice, { foreignKey: 'invoiceId' })
   public recurringInvoice: HasOne<typeof RecurringInvoice>
+
+  @belongsTo(() => Document, { foreignKey: 'invoiceId' })
+  public overdueInvoice: BelongsTo<typeof Document>
 
   @hasMany(() => Document, { foreignKey: 'offerId' })
   public invoices: HasMany<typeof Document>

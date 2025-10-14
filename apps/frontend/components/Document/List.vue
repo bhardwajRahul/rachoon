@@ -3,7 +3,7 @@ import { Document, DocumentStatus, DocumentType } from "~~/models/document";
 import cronstrue from "cronstrue";
 
 const props = defineProps({
-  clientId: { type: String, default: "" },
+  filter: { type: Array<string>, required: false, default: [] },
   list: { type: Array as () => Document[], default: null },
   type: { type: String, default: null, required: false },
   canFilter: { type: Boolean, default: true },
@@ -11,8 +11,8 @@ const props = defineProps({
 });
 
 const controller = () => useDocument();
-if (props.clientId && props.clientId !== "") {
-  controller().listForClient(props.clientId);
+if (props.filter.length === 3) {
+  controller().filter([props.filter[0], props.filter[1], props.filter[2]]);
 } else {
   if (!props.list) {
     controller().list();
@@ -100,12 +100,9 @@ const columns = [
       @sort="(sort) => controller().sort(sort)"
     >
       <template #number="{ row }">
-        <div class="indicator">
-          <span class="indicator-item badge badge-xs badge-error" v-if="row.totalReminders > 0">{{ row.totalReminders }}</span>
-          <NuxtLink :href="`/${$props.type || controller().type()}/${row.id}`" class="link">
-            {{ row.number }}
-          </NuxtLink>
-        </div>
+        <NuxtLink :href="`/${$props.type || controller().type()}/${row.id}`" class="link">
+          {{ row.number }}
+        </NuxtLink>
         <br />
         <small class="opacity-50">last modified {{ useFormat.date(row.updatedAt) }}</small>
       </template>
@@ -122,15 +119,31 @@ const columns = [
             <FaIcon icon="fa-solid fa-repeat" v-else />
           </span>
         </div>
-        <span v-if="row.invoices.length > 0" class="iconbadge">
-          <NuxtLink :href="`/invoices/?offerId=${row.id}`">
-            <FaIcon icon="fa-solid fa-file-invoice" />
-          </NuxtLink>
-        </span>
-        <div v-if="row.offer?.id !== ''" class="tooltip" :data-tip="`Invoiced from: ${row.offer?.number}`">
+        <div class="tooltip" v-if="row.invoices.length > 0" data-tip="View Invoices">
+          <span class="iconbadge">
+            <NuxtLink :href="`/invoices/offer/${row.id}`">
+              <FaIcon icon="fa-solid fa-file-invoice" />
+            </NuxtLink>
+          </span>
+        </div>
+        <div v-if="row.offer" class="tooltip" :data-tip="`Invoiced from: ${row.offer?.number}`">
           <span class="iconbadge">
             <NuxtLink :href="`/offers/${row.offer?.id}`">
-              <FaIcon icon="fa-solid fa-file-export" />
+              <FaIcon icon="fa-solid fa-signature" />
+            </NuxtLink>
+          </span>
+        </div>
+        <div v-if="row.overdueInvoice" class="tooltip" :data-tip="`Overdue ${row.overdueInvoice.number}`">
+          <span class="iconbadge">
+            <NuxtLink :href="`/invoices/${row.overdueInvoice.id}`">
+              <FaIcon icon="fa-solid fa-file-invoice" />
+            </NuxtLink>
+          </span>
+        </div>
+        <div v-if="row.totalReminders > 0" class="tooltip" :data-tip="`Reminders ${row.totalReminders}`">
+          <span class="iconbadge">
+            <NuxtLink :href="`/reminders/invoice/${row.id}`">
+              <FaIcon icon="fa-solid fa-bell" />
             </NuxtLink>
           </span>
         </div>
@@ -191,7 +204,7 @@ const columns = [
 
           <li v-if="controller().isOffer() && row.invoices.reduce((p, c) => (p += c.data.net), 0) < row.data.net">
             <NuxtLink :to="`/invoices/new?offer=${row.id}`">
-              <FaIcon icon="fa-solid fa-file-export" />
+              <FaIcon icon="fa-solid fa-file-import" />
               Create Invoice
             </NuxtLink>
           </li>

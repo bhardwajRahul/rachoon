@@ -1,8 +1,8 @@
 <template>
   <div>
     <FormSection title="Organization" description="Organization name and VAT number">
-      <div class="flex gap-5">
-        <div class="w-1/2">
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <div class="">
           <label class="label w-full max-w-xs">
             <span class="label-text">
               Organization name
@@ -35,11 +35,11 @@
             class="input input-bordered input-sm w-full max-w-xs"
           />
         </div>
-        <div class="w-1/2 text-center">
+        <div class="">
           <img
             v-if="useProfile().me.organization.data.logo !== ''"
             :src="useProfile().me.organization.data.logo"
-            class="h-16 w-auto inline-block"
+            class="h-16 w-auto inline-block m-0 mt-5"
           />
           <div class="form-control">
             <label class="label">
@@ -47,12 +47,12 @@
             </label>
             <input
               type="file"
-              class="file-input file-input-bordered"
+              class="file-input file-input-bordered file-input-xs"
               accept=".jpeg,.jpg,.png,image/jpeg,image/png"
               aria-label="upload image button"
               @change="useSettings().selectFile"
             />
-            <label class="label">
+            <label class="label opacity-50">
               <span class="label-text-alt">image/jpeg, image/png</span>
               <span class="label-text-alt">max 15kb</span>
             </label>
@@ -62,7 +62,7 @@
     </FormSection>
     <FormSection title="Address" description="Contact Information">
       <div>
-        <div class="grid grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
           <div>
             <label class="label w-full max-w-xs">
               <span class="label-text">

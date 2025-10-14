@@ -40,7 +40,7 @@ export default class Base<T extends IBase> {
 
   singularType = (firstToUpper: boolean = false) => this.type(firstToUpper).slice(0, this.type(firstToUpper).length - 1);
 
-  async filter(key: string, operator: string, value: string) {
+  filter = ([key, operator, value]: [key: string, operator: string, value: string]) => {
     if (operator === "=") operator = "%3D";
     if (!this.filterKeys.value[key]) {
       this.filterKeys.value = { ...this.filterKeys.value, [key]: { operator: operator, value: value } };
@@ -49,7 +49,8 @@ export default class Base<T extends IBase> {
       tmp[key] = { operator: operator, value: value };
       this.filterKeys.value = tmp;
     }
-  }
+    this.list(true);
+  };
 
   watchSearch = () => {
     watchDebounced(

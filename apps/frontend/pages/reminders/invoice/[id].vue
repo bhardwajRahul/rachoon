@@ -6,6 +6,6 @@ definePageMeta({
 
 <template>
   <div>
-    <DocumentList :filter="['clientId', '=', useRoute().params.id as string]" />
+    <DocumentList :filter="['invoiceId', '=', useRoute().params.id as string]" />
   </div>
 </template>

@@ -52,11 +52,6 @@ class DocumentStore extends Base<Document> {
     this.item.value.rebuild();
   };
 
-  listForClient = (id: string) => {
-    this.filter("clientId", "=", id);
-    this.list(true);
-  };
-
   setStatus = (d: Document) => {
     if (d.invoices.length > 0) {
       useToast("Cannot change status", "Offer is already invoiced.", "warning");
@@ -72,9 +67,9 @@ class DocumentStore extends Base<Document> {
     useApi().documents(this.docType()).setStatus(d.id, status);
   };
 
-  list = async (keepFilter: boolean = false) => {
+  list = async () => {
     this.getAllFunc = useApi().documents(this.docType()).getAll;
-    this.parentList(keepFilter);
+    this.parentList();
   };
 
   docType = (): DocumentType => {

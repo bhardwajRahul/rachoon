@@ -2,12 +2,10 @@
 definePageMeta({
   layout: "core",
 });
-
-const clientId = useRoute().params.id as string;
 </script>
 
 <template>
   <div>
-    <DocumentList :clientId="clientId" />
+    <DocumentList :filter="['clientId', '=', useRoute().params.id as string]" />
   </div>
 </template>
