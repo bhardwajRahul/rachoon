@@ -3,7 +3,7 @@ import Template from 'App/Models/Template'
 import { readFile } from 'fs/promises'
 export default class extends BaseSeeder {
   public async run() {
-    const file = __dirname + '/../../resources/defaultTemplate.html'
+    const file = __dirname + '/../../resources/InitialTemplate.html'
     const html = await readFile(file, 'utf8')
 
     let template = await Template.query()
