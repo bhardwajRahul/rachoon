@@ -12,11 +12,15 @@ class AuthStore {
 
   loginEmailPassword = async (email: string, password: string, slug: string = "") => {
     this.loadingLogin.value = true;
-    const res = await useApi().auth(slug).loginEmailPassword(email, password);
-    if (res.token) {
-      localStorage.setItem("auth-token", res.token);
-      await useProfile().init();
-      useRouter().replace("/");
+    try {
+      const res = await useApi().auth(slug).loginEmailPassword(email, password);
+      if (res && res.token) {
+        localStorage.setItem("auth-token", res.token);
+        await useProfile().init();
+        useRouter().replace("/");
+      }
+    } catch (e) {
+      console.log(e);
     }
     this.loadingLogin.value = false;
   };

@@ -63,8 +63,11 @@ export default class HttpClient {
 
     if (e.data) {
       if (e.data?.errors[0]?.message.includes("E_INVALID_AUTH_PASSWORD")) {
-        title = "Invalid credentials";
         message = "Email and password do not match";
+      } else if (e.data?.errors[0]?.message) {
+        message = e.data.errors[0].message;
+      } else if (typeof e.data === "string") {
+        message = e.data;
       }
     }
     useToast(title, message, "error");

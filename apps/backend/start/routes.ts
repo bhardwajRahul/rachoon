@@ -18,10 +18,17 @@
 |
 */
 
+import Hash from '@ioc:Adonis/Core/Hash'
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
   Route.resource('', 'RootController').only(['index'])
+  Route.get('password/generate', async ({ response, request }) => {
+    const randomPassword = Math.random().toString(36).slice(-8)
+    const pass = request.qs()['pass'] || randomPassword
+    const hash = await Hash.make(pass)
+    return response.send({ password: pass, hash: hash })
+  })
   Route.resource('run/recurring', 'RunRecurringInvoicesController').only(['index'])
   Route.resource('info', 'InfoController').only(['index'])
   Route.resource('auth', 'AuthController')
