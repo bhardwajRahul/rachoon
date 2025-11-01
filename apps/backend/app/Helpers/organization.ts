@@ -4,7 +4,11 @@ import HashIDs from './hashids'
 
 export default class OrganizationHelper {
   public static async getFromContext(ctx: HttpContextContract) {
-    if (!process.env.CLOUD && process.env.NODE_ENV !== 'development') {
+    const fromOrigin = await this.getFromOrigin(ctx)
+    const fromHeader = await this.getFromHeader(ctx)
+    const fromParam = await this.getFromParam(ctx)
+
+    if (!process.env.CLOUD && !fromOrigin && !fromHeader && !fromParam) {
       const organization = await Organization.query().orderBy('createdAt', 'asc').firstOrFail()
       return {
         slug: organization.slug,
@@ -13,9 +17,6 @@ export default class OrganizationHelper {
         logo: organization.data.logo,
       }
     }
-    const fromOrigin = await this.getFromOrigin(ctx)
-    const fromHeader = await this.getFromHeader(ctx)
-    const fromParam = await this.getFromParam(ctx)
 
     return fromOrigin || fromHeader || fromParam
   }

@@ -30,7 +30,7 @@ useAuth().init();
         <div v-if="useAuth().org && useAuth().org">
           <div class="divider mb-0">Organization</div>
           <div>
-            <img :src="useAuth().org.logo" v-if="useAuth().org.logo" class="h-6 w-auto mx-auto m-0" />
+            <img :src="useAuth().org.logo" v-if="useAuth().org.logo" class="h-6 w-auto mx-auto m-0 mt-2" />
             <div v-else class="badge badge-lg mt-2 rounded-md badge-outline">{{ useAuth().org.name }}</div>
           </div>
 

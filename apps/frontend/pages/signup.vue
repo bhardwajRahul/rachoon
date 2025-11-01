@@ -2,6 +2,11 @@
 import { getActivePinia } from "pinia";
 getActivePinia()._s.forEach((s) => s.$reset());
 
+const organizationUrl = (slug: string) => {
+  const l = window.location;
+  return `${l.protocol}//${slug}.${l.hostname}${l.port ? `:${l.port}` : ""}`;
+};
+
 const step = ref(1);
 </script>
 <template>
@@ -41,7 +46,7 @@ const step = ref(1);
                 <FaIcon icon="fa-solid fa-check" v-if="useSignup().slugInUse === false" />
                 <FaIcon icon="fa-solid fa-close" v-if="useSignup().slugInUse === true" />
               </span>
-              <span>https://{{ useSignup().slug }}.rachoon.work</span>
+              <span>{{ organizationUrl(useSignup().slug) }}</span>
             </div>
             <div class="text-error opacity-50 text-xs" v-if="useSignup().slugInUse === true">
               Slug '{{ useSignup().slug }}' already in use.
