@@ -59,7 +59,7 @@ services:
     image: ghcr.io/ad-on-is/rachoon
     container_name: rachoon
     environment:
-      - APP_KEY=<some-app-key>
+      - APP_KEY=<some-app-key> # min 32 characters - used to encrypt and sign sensitive data
       - DB_CONNECTION=pg
       - GOTENBERG_URL=http://gotenberg:3000
       - PG_HOST=postgres16
