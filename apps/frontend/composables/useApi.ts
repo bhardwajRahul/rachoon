@@ -240,6 +240,12 @@ export default function useApi() {
         logout: async (id: string) => (await useHttp.del(`${endpoint}/${id}`)).body,
       };
     },
+
+    info: () => {
+      return {
+        get: async (): Promise<any> => (await useHttp.get("/api/info")).body,
+      };
+    },
     render: async (html: string, preview: boolean = false): Promise<string[] | string> => {
       const res = (await useHttp.post(
         `/api/render${preview ? "?preview=true" : ""}`,

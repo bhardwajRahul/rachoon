@@ -27,7 +27,6 @@ export default class HttpClient {
       const headers: any = {
         "content-type": "application/json",
         origin: origin,
-        // Authorization: `Bearer ${useAuth().key()}`
       };
       if (useAuth().key() !== null) {
         headers["Authorization"] = `Bearer ${useAuth().key()}`;

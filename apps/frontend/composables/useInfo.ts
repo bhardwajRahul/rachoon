@@ -1,4 +1,4 @@
-class EnvStore {
+class InfoStore {
   info = <Ref<null | any>>ref(null);
 
   loading = ref(false);
@@ -6,9 +6,15 @@ class EnvStore {
     if (this.info.value !== null) return;
     this.loading.value = true;
     this.info.value = ((await useFetch("/app/info")) as any).data.value;
-    console.log(JSON.parse(JSON.stringify(this.info.value)));
+    const url = useRequestURL();
+    if (this.info.value.BASE_URL === "") {
+      this.info.value.BASE_URL = `${url.protocol}//${url.host}`;
+    }
+    const apiInfo = await useApi().info().get();
+    this.info.value = { ...this.info.value, ...apiInfo };
+    console.log(this.info.value);
     this.loading.value = false;
   };
 }
 
-export default defineStore("info", () => new EnvStore());
+export default defineStore("info", () => new InfoStore());
