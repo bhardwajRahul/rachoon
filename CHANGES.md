@@ -106,12 +106,14 @@ total: 6 commits
 
 - pnpm store caching for faster builds
 - postgres 16 test database service
-- environment variables for test database (APP*KEY, APP_NAME, NODE_ENV, PG*\*)
+- environment variables for test database (APP_KEY, APP_NAME, NODE_ENV, DB_CONNECTION, PG_*)
 - `continue-on-error: true` for non-blocking checks
 - multi-platform docker builds (linux/amd64, linux/arm64)
 - semantic docker tags (branch name, latest, version)
 - `--ignore-scripts` flag to skip problematic postinstall scripts
 - backend-only builds (frontend has oxc-parser issues in ci)
+- @repo/common builds before backend (monorepo dependency order)
+- empty frontend .output directory created for docker build
 
 ---
 
@@ -153,15 +155,23 @@ total: 6 commits
 
 ---
 
-### 6. fix: configure eslint for backend with root:true
+### 6. fix: configure ci/cd pipeline for monorepo builds
 
-**commit**: `a66c4ff`
+**commit**: `c448b2e`
 
-#### problem
+#### problems
 
 - ci failing with eslint error: "You are linting ".", but all of the files matching the glob pattern "." are ignored"
 - all typescript files in backend were being ignored by eslint
 - root .eslintrc.js has `ignorePatterns: ["apps/**", "packages/**"]`
+- backend tests failing with missing `DB_CONNECTION` environment variable
+- docker build failing: cannot find `./apps/frontend/.output` directory
+
+#### root causes
+
+- eslint configuration inheritance from parent
+- missing database connection type in test environment
+- frontend doesn't build in ci, so .output directory doesn't exist for docker
 
 #### changes made
 
@@ -190,8 +200,18 @@ total: 6 commits
 
 - added `--ignore-scripts` flag to pnpm install
 - changed builds to backend-only: `pnpm --filter backend build`
+- added `DB_CONNECTION: pg` to test job environment variables
+- added step to create `apps/frontend/.output` directory before docker build
 - frontend doesn't build in ci due to oxc-parser native binding issues
 - docker deployment only needs backend build
+
+**.gitignore**
+
+- added `.windsurf/` to ignored directories (ide-specific workflows)
+
+**CHANGES.md**
+
+- improved formatting with blank lines between sections
 
 ---
 
@@ -253,14 +273,17 @@ total: 6 commits
 
 - ✅ working postgresql connection with auto-initialization
 - ✅ comprehensive test infrastructure
-- ✅ 4-stage ci/cd pipeline
+- ✅ 4-stage ci/cd pipeline with proper env vars
 - ✅ detailed contribution guidelines
 - ✅ code of conduct
 - ✅ github issue/pr templates
 - ✅ automated code quality checks
 - ✅ docker multi-platform builds
 - ✅ eslint properly configured with root:true
-- ✅ backend tests with APP_KEY environment variable
+- ✅ backend tests with complete environment (APP_KEY, DB_CONNECTION)
+- ✅ docker build workaround for missing frontend .output
+- ✅ monorepo build order (@repo/common before backend)
+- ✅ clean commit history
 
 ---
 
@@ -269,6 +292,7 @@ total: 6 commits
 - `docker/init-db.sh`
 - `CONTRIBUTING.md`
 - `CODE_OF_CONDUCT.md`
+- `CHANGES.md`
 - `.github/PULL_REQUEST_TEMPLATE.md`
 - `.github/ISSUE_TEMPLATE/bug_report.yml`
 - `.github/ISSUE_TEMPLATE/feature_request.yml`
@@ -297,15 +321,26 @@ total: 6 commits
 ### oxc-parser native binding in ci
 
 **issue**: frontend postinstall (`nuxt prepare`) fails in github actions ci with oxc-parser native binding error
+
 **impact**: frontend doesn't build in ci
+
 **workaround**:
 
 - skip postinstall with `--ignore-scripts`
 - build backend only in ci
 - frontend builds successfully in local development
 - docker deployment only needs backend
+- create empty `apps/frontend/.output` directory for docker build step
 
 **root cause**: pnpm doesn't properly install @oxc-parser/binding-linux-x64-gnu optional dependency in github actions environment
+
+### missing database connection type in tests
+
+**issue**: backend tests failing with "Invalid database config. Missing value for connection"
+
+**solution**: added `DB_CONNECTION: pg` environment variable to test job
+
+**impact**: backend tests now run successfully with proper postgres connection
 
 ---
 
