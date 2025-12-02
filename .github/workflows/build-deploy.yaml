@@ -132,15 +132,15 @@ jobs:
         run: |
           cd ./apps/backend
           echo "VERSION=$(pnpm pkg get version | sed 's/"//g')" >> $GITHUB_OUTPUT
-      # - name: Create and push tag
-      #   run: |
-      #     VERSION=${{ steps.package-version.outputs.VERSION }}
-      #     git config user.name "github-actions[bot]"
-      #     git config user.email "github-actions[bot]@users.noreply.github.com"
-      #     git tag "v${VERSION}"
-      #     git push origin "v${VERSION}"
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create and push tag
+        run: |
+          VERSION=${{ steps.package-version.outputs.VERSION }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "v${VERSION}"
+          git push origin "v${VERSION}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - name: Generate changelog
       #   id: changelog
       #   run: |
