@@ -30,7 +30,7 @@ WORKDIR /app
 COPY ./Caddyfile .
 COPY ./entrypoint.sh .
 COPY --from=builder  /app/apps/frontend/.output ./frontend
-COPY --from=builder  /tmp/apps ./backend
+COPY --from=builder  /tmp ./backend
 
 WORKDIR /app
 
